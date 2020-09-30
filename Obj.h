@@ -14,6 +14,10 @@ public:
     void setPostUrlencoded(QString strPostData);
     void setPostJson(QString strPostData);
 
+    void update(Obj *newObj);
+    QJsonObject& getObj() {return obj;}
+
+
     // QJSEngine:
     Q_INVOKABLE QString menu();
     Q_INVOKABLE QString body();

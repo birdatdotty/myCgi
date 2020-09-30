@@ -9,7 +9,7 @@ class RouterListen : public QThread
 {
     Q_OBJECT
 public:
-    explicit RouterListen(FCGX_Request &request, Router* router, QObject *parent = nullptr);
+    explicit RouterListen(QString path, int listenQueueBacklog, Router* router, QObject *parent = nullptr);
 
 protected:
     void run() override;

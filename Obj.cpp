@@ -56,6 +56,10 @@ void Obj::setPostJson(QString strPostData)
 #endif
 }
 
+void Obj::update(Obj *newObj) {
+    obj = newObj->obj;
+}
+
 QString Obj::menu() {
     QString ret = "__MENU__%1:%2__";
 

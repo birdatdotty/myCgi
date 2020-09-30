@@ -40,9 +40,10 @@ Page::Page(QString prefix, QString url, QObject *parent)
 
     list << str.mid(s);
 }
-
+#include "Obj.h"
 QString Page::out(QJSEngine *engine, Obj* obj) const
 {
+    qInfo() << obj->getObj();
     QString ret = "Content-type: text/html\n\n";
     for (int i = 0; i < list.size(); i++) {
         if ((i & 1) == 0)

@@ -21,7 +21,6 @@ curl --header "Content-Type: application/x-www-form-urlencoded"   --request POST
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include <QFileSystemWatcher>
 #include <fcgi_stdio.h>
 
 #ifdef DEBUG
@@ -31,6 +30,8 @@ curl --header "Content-Type: application/x-www-form-urlencoded"   --request POST
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
+
 #ifdef DEBUG
     qInfo() << "DEBUG";
 #endif
@@ -40,37 +41,16 @@ int main(int argc, char *argv[])
     //Глубина стека запросов
     int listenQueueBacklog = 400;
 
-    QCoreApplication app(argc, argv);
-
-
-    // for unix socket:
-    const char* path = "/home/1/fcgi.sock"; //Задаем unix socket
-    // for file:
-    // Открываем новый слушающий сокет
-    int listen_socket = FCGX_OpenSocket(path, listenQueueBacklog);
-    // разрешаем чтение и запись для всех
-    chmod(path, S_IRUSR|S_IRGRP|S_IROTH|
-                S_IWUSR|S_IWGRP|S_IWOTH);
-    // end for unix socket.
-
-//    // for port:
-//     std::string port=":9000";        //Задаем номер порта TCP
-//     // Открываем новый слушающий сокет
-//     int listen_socket = FCGX_OpenSocket(path, listenQueueBacklog);
-//    // end for port.
-
-    if(listen_socket < 0)    exit(1);
-
-    FCGX_Request request;
-    if(FCGX_InitRequest(&request, listen_socket, 0))
-        exit(1); //Инициализируем структуру запроса
+    //Задаем unix socket
+    const char* path = "/home/1/fcgi.sock";
 
     // Создаем router для оброботки входящих соединений:
     Router *router = new Router("/var/www/html/");
 
     // создаем и запускаем прослушивание в отдельном потоке:
-    RouterListen *routerListen = new RouterListen(request, router);
+    RouterListen *routerListen = new RouterListen(path, listenQueueBacklog, router);
     routerListen->start();
+    chmod(path, ALLPERMS);
 
 
     return app.exec();

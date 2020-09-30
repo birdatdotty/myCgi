@@ -37,11 +37,12 @@ void Router::request(FCGX_Request &req)
     const int ContentLength = atoi(FCGX_GetParam("CONTENT_LENGTH", req.envp));
 
 #ifdef DEBUG
-    std::cout << "request" << std::endl;
-    std::cout << "method: " << method << std::endl;
-    std::cout << "ContentType: " << ContentType << std::endl;
-    std::cout << "uri: " << uri << std::endl;
+    std::cout << "request:" << std::endl;
+    std::cout << "method \t " << method << std::endl;
+    std::cout << "ContentType \t " << ContentType << std::endl;
+    std::cout << "uri \t " << uri << std::endl;
 #endif
+
 
     char* postData;
     if (ContentLength > 0) {
@@ -52,12 +53,11 @@ void Router::request(FCGX_Request &req)
           obj->setPostUrlencoded(postData);
       else if (strcmp(ContentType, "application/json") == 0)
           obj->setPostJson(postData);
-
+    }
 
 #ifdef DEBUG
       std::cout << "postData: " << postData << std::endl;
 #endif
-    }
 
     Page *page;
     if (!pages.contains(url)) {
@@ -73,8 +73,13 @@ void Router::request(FCGX_Request &req)
     QJsonObject json = str2json(getData);
     QJsonObject data;
     data["page"] = url;
-    obj->set(data);
+#ifdef DEBUG
+    data["method"] = method;
+    data["url"] = url;
+    data["get"] = getData;
+#endif
 
+    obj->set(data);
     QByteArray pageOut = page->out(engine,obj).toUtf8();
 
     //Завершаем запрос

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
+# for build with debug:
 
 project(myCgi2 LANGUAGES CXX)
 
@@ -16,7 +17,6 @@ find_package(Qt5 COMPONENTS Core Qml REQUIRED)
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   message("Debug build.")
-  #  set(DEBUG TRUE)
   add_definitions( -DDEBUG )
 ENDIF()
 
