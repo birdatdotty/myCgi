@@ -1,0 +1,57 @@
+// const onclick
+var menuSrc = [
+  {"name":"put.unix", "href":"/put.unix", "sub":[]},
+  {"name":"info", "href":"/info", "sub":[
+    {"name":"item-2-1", "href":"/info/a.unix", "sub":[]},
+    {"name":"item-2-2", "href":"/info/b.unix", "sub":[]},
+    {"name":"item-2-3", "href":"/info/c.unix", "sub":[
+      {"name":"item-2-3-1", "href":"/info/c/i1.unix", "sub":[]},
+      {"name":"item-2-3-2", "href":"/info/c/i2.unix", "sub":[]},
+      {"name":"item-2-3-3", "href":"/info/c/i3.unix", "sub":[]}
+    ]},
+    {"name":"/info/d", "href": "/info/d", "sub":[
+      {"name":"item-2-4-1", "href":"/info/d/a1.unix", "sub":[]},
+      {"name":"item-2-4-2", "href":"/info/d/a2.unix", "sub":[]},
+      {"name":"item-2-4-3", "href":"/info/d/a3.unix", "sub":[]}
+    ]}
+  ]},
+  {"name":"item-3", "href":"#item-3", "sub":[]},
+  {"name":"item-4", "href":"#item-4", "sub":[]},
+  {"name":"form", "href":"#item-5", "sub":[
+    {"name":"item-2-4-3", "href":"#item-2-4-3", "sub":[]}
+  ]}
+]
+function li(name) {
+  return "<li><a>" + name + "</a></li>";
+}
+function buildFromJson(block) {
+  var ret = "";
+  for (var i = 0; i < block.length; i++) {
+    if (block[i]["sub"].length === 0) {
+      if (block[i]["href"] === undefined) {
+        if (Obj.testPath("url", block[i]["href"]))
+          ret += "<li class='active'><a>" + block[i]["name"] + "<a></li>";
+        else
+          ret += "<li class='notActive'><a>" + block[i]["name"] + "<a></li>";
+      }
+      else {
+        if ( Obj.testPath("url", block[i]["href"]) )
+          ret += "<li class='active'><a href='" +  block[i]["href"] + "'>" + block[i]["name"] + "</a></li>";
+        else
+          ret += "<li><a href='" +  block[i]["href"] + "'>" + block[i]["name"] + "</a></li>";
+      }
+    } else {
+      if (Obj.testPath("url", block[i]["href"]))
+        ret += "<li class='active'><a>" + block[i]["name"] + "</a><ul>";
+      else
+        ret += "<li class='notActive'><a>" + block[i]["name"] + "</a><ul>";
+      ret += buildFromJson(block[i]["sub"]);
+      ret += "</ul></li>";
+    }
+  }
+  return ret;
+}
+//class="active"
+let str = "<ul>" + buildFromJson(menuSrc) + "</ul>" + "\n\n<b>chunk: " + Obj.chunk("/chunks/chunk2.chunk") + "</b>"
+//console.log(str)
+str

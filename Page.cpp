@@ -3,12 +3,25 @@
 #include <QFile>
 #include <QJSEngine>
 
+#include "Obj.h"
+
+#ifdef DEBUG
+    #include <QDebug>
+    #include <iostream>
+#endif
+
 
 Page::Page(QStringList list, QObject *parent)
     : QObject(parent),
       list(list),
       m_exist(true)
-{}
+{
+    engine = new QJSEngine;
+    obj = new Obj;
+
+    QJSValue jsObj = engine->newQObject(obj);
+    engine->globalObject().setProperty("Obj", jsObj);
+}
 
 Page::Page(QString prefix, QString url, QObject *parent)
     : QObject(parent)
@@ -25,7 +38,7 @@ Page::Page(QString prefix, QString url, QObject *parent)
     m_exist = true;
     str = f.readAll();
 
-    QRegExp rx("\\b(Obj\\.\\w+\\(.*\\))");
+    QRegExp rx("\\b(Obj\\s*\\.\\w+\\(.*\\)){1,}");
     rx.setMinimal(true);
     int pos = 0;
     int s = 0;
@@ -40,16 +53,22 @@ Page::Page(QString prefix, QString url, QObject *parent)
 
     list << str.mid(s);
 }
-#include "Obj.h"
-QString Page::out(QJSEngine *engine, Obj* obj) const
+
+QString Page::out(Obj* obj) const
 {
-    qInfo() << obj->getObj();
+    QJSEngine engine;
+    QJSValue jsObj = engine.newQObject(obj);
+//    QJSValue jsData = engine.newQObject(obj->getObj());
+    engine.globalObject().setProperty("Obj", jsObj);
+
+
     QString ret = "Content-type: text/html\n\n";
     for (int i = 0; i < list.size(); i++) {
         if ((i & 1) == 0)
             ret += list.at(i);
         else {
-            ret += engine->evaluate(list.at(i)).toString();
+            ret += engine.evaluate(list.at(i)).toString();
+//            ret += list.at(i);
         }
     }
 

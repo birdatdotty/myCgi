@@ -1,97 +1,90 @@
 #include "Router.h"
 #include "Page.h"
+#include "Chunk.h"
+#include "utils.h"
 
 #include <QFile>
 
 #ifdef DEBUG
-#include <iostream>
+    #include <QDateTime>
+    #include <QDebug>
+    #include <iostream>
 #endif
+
+#include "RouterJs.h"
+#include "RouterPost.h"
 
 Router::Router(QString root, QObject *parent)
     : QObject(parent),
       root(root),
-      watcher(new QFileSystemWatcher(this)),
-      engine(new QJSEngine),
-      obj(new Obj)
+      pageWatcher(new QFileSystemWatcher(this))
 {
-    QJSValue jsObj = engine->newQObject(obj);
-    engine->globalObject().setProperty("Obj", jsObj);
-    connect(watcher, &QFileSystemWatcher::fileChanged,
-            this, &Router::fileChanged);
+    connect(pageWatcher, &QFileSystemWatcher::fileChanged,
+            this, &Router::pageChanged);
+
+    routes["js"] = new RouterJs(this);
+    routes["post"] = new RouterPost(this);
 }
+
+QString Router::chunk(QString key) {
+    return "Router::chunk " + key;
+}
+
+//QString Router::chunk(QString key)
+//{
+//    QString ret = "QString Router::chunk(QString key):" + key;
+//    return ret;
+//}
 
 void Router::request(FCGX_Request &req)
 {
+    Obj *obj = new Obj(this);
+
+    #ifdef DEBUG
+        std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
+        qInfo() << "request:";
+    #endif
     // https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
     // GET, POST, maybe PUT, DELETE, HEAD, CONNECT, OPTIONS, TRACE, PATCH
-    const char *method = FCGX_GetParam("REQUEST_METHOD", req.envp);
-    /// uri: /index.dsfsd&dsdsf=22
-    const char *uri = FCGX_GetParam("REQUEST_URI", req.envp);
+    const char *_method = method(req);
     /// url: /index.dsfsd
-    const char *url = FCGX_GetParam("DOCUMENT_URI", req.envp);
-    /// get: dsdsf=22
-    const char *getData = FCGX_GetParam("QUERY_STRING", req.envp);
-    /// Content-type: text/html
-    const char *ContentType = FCGX_GetParam("CONTENT_TYPE", req.envp);
-    /// length of body (post)
-    const int ContentLength = atoi(FCGX_GetParam("CONTENT_LENGTH", req.envp));
+    QString _url = url(req);
 
 #ifdef DEBUG
-    std::cout << "request:" << std::endl;
-    std::cout << "method \t " << method << std::endl;
-    std::cout << "ContentType \t " << ContentType << std::endl;
-    std::cout << "uri \t " << uri << std::endl;
+    qInfo() << "_url:" << _url;
 #endif
+//    if (startsWith("/js", _url))
+//        qInfo() << "TRUE";
+//    else
+//        qInfo() << "FALSE";
 
 
-    char* postData;
-    if (ContentLength > 0) {
-      postData = (char*) malloc(ContentLength+1);
-      FCGX_GetStr(postData, ContentLength, req.in);
-      postData[ContentLength] = '\0';
-      if (strcmp(ContentType, "application/x-www-form-urlencoded") == 0)
-          obj->setPostUrlencoded(postData);
-      else if (strcmp(ContentType, "application/json") == 0)
-          obj->setPostJson(postData);
-    }
+//    if (startsWith("/post", _url))
+//        routePost(req, _url, obj);
+//    else if (startsWith("/js", _url))
+//        routes["/js"]->route(req, _url, obj);
+////        routeJs(req, _url, obj);
+//    qInfo() << __LINE__ << "_url" << _url;
+//    if (routes.contains(_url))
+//        routes[_url]->route(req, _url, obj);
+//    else
+//        routeDefault(req, _url, obj);
+    select(_url, _method)->route(req, _url, obj);
+}
 
+Router *Router::select(QString url, QString method)
+{
+    QStringList urlList = url.split('/');
 #ifdef DEBUG
-      std::cout << "postData: " << postData << std::endl;
+    qInfo() << urlList;
 #endif
+    if (urlList.size() > 1)
+        if (routes.contains(urlList.at(1)))
+            return routes[urlList.at(1)];
 
-    Page *page;
-    if (!pages.contains(url)) {
-        QString file = root + url;
-        page = new Page(root, url);
-        if (QFile::exists(file)) {
-            watcher->addPath( file );
-            pages[url] = page;
-        }
-    }
-    else page = pages[url];
-
-    QJsonObject json = str2json(getData);
-    QJsonObject data;
-    data["page"] = url;
-#ifdef DEBUG
-    data["method"] = method;
-    data["url"] = url;
-    data["get"] = getData;
-#endif
-
-    obj->set(data);
-    QByteArray pageOut = page->out(engine,obj).toUtf8();
-
-    //Завершаем запрос
-    //DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);
-    //DLLAPI int FCGX_FPrintF(FCGX_Stream *stream, const char *format, ...);
-    //...
-    FCGX_PutStr(pageOut, pageOut.size(), req.out);
-
-    if (ContentLength > 0)
-        free(postData);
-
-    FCGX_Finish_r(&req);
+    return this;
+    exit(-1);
+//    QString _url =
 }
 
 QJsonObject Router::str2json(QString str)
@@ -122,15 +115,88 @@ QJsonObject Router::str2json(QString str)
     return obj;
 }
 
-void Router::fileChanged(const QString &path) {
+Page *Router::getPage(const char *url) {
+    Page *page;
+    if (!pages.contains(url)) {
+        QString file = root + url;
+        page = new Page(root, url);
+        if (QFile::exists(file)) {
+            pageWatcher->addPath( file );
+            pages[url] = page;
+        }
+    }
+    else page = pages[url];
+
+    return page;
+}
+
+QString Router::getChunk(QString url)
+{
+    Chunk* _chunk;
+    if (!chunks.contains(url)) {
+        QString file = root + url;
+        _chunk = new Chunk(root, url);
+        if (QFile::exists(file)) {
+            pageWatcher->addPath( file );
+            chunks[url] = _chunk;
+        }
+    }
+    else _chunk = chunks[url];
+
+    return _chunk->out();
+}
+
+bool Router::route(FCGX_Request &req, QString url, Obj *obj)
+{
+#ifdef DEBUG
+    qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
+#endif
+    setPostData(req, obj);
+
+    //    Page *page = getPage(url);
+    Page *page = getPage("/put.unix");
+
+    QJsonObject json = str2json(getData(req));
+    QJsonObject data;
+    data["page"] = uri(req);
+    data["method"] = method(req);
+    data["get"] = getData(req);
+    data["url"] = url;
+
+    obj->set(data);
+    QByteArray pageOut = page->out(obj).toUtf8();
+
+    // Завершаем запрос
+    // DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);
+    // DLLAPI int FCGX_FPrintF(FCGX_Stream *stream, const char *format, ...);
+    // ...
+    FCGX_PutStr(pageOut, pageOut.size(), req.out);
+    FCGX_Finish_r(&req);
+
+    return true;
+
+}
+
+
+void Router::pageChanged(const QString &path) {
     if (!path.startsWith(root))
         return;
 
     QString key = path;
     key = key.remove(0, root.size());
 
+#ifdef DEBUG
+    std::cout << "request: " << std::endl;
+    qInfo() << "path: [" + path + "]";
+    qInfo() << "key: [" + key + "]";
+#endif
+
+
     if (pages.contains(key)) {
         pages.remove(key);
-        watcher->removePath(path);
+        pageWatcher->removePath(path);
+#ifdef DEBUG
+        qInfo() << path + " removed";
+#endif
     }
 }

@@ -11,14 +11,19 @@ class Page : public QObject
 {
     Q_OBJECT
 public:
+    enum TYPE{HTML,JS,CSS};
     explicit Page(QStringList list, QObject *parent = nullptr);
     explicit Page(QString prefix, QString url, QObject *parent = nullptr);
-    QString out(QJSEngine *engine, Obj *obj) const;
+    QString out(Obj *obj) const;
     bool exist();
 
 private:
     QStringList list;
     bool m_exist;
+
+    QJSEngine *engine;
+    Obj *obj;
+
 
 signals:
 

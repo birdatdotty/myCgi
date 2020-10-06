@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+main {
+  margin: 20px 40px;
+}
+#menu {
+  position: sticky;
+  top: 0;
+}
+#menu * {
+  color: #ccc;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: all 0.1s ease-in-out;
+}
+#menu a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  padding: 20px 40px;
+}
+#menu li {
+  position: relative;
+  text-align: center;
+  padding: 10px;
+}
+#menu li.active > a {
+  color: #333;
+}
+#menu li:hover {
+  background-color: #a9f9f9;
+}
+#menu > ul {
+  display: flex;
+  justify-content: space-around;
+}
+#menu > ul ul > li:not(:last-child) {
+  border-bottom: 1px solid #a9f9f9;
+}
+#menu ul {
+  background-color: #f9f9f9;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+#menu > ul li > ul {
+  position: absolute;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+#menu > ul ul > li > ul {
+  top: 0;
+}
+#menu > ul li:hover > ul {
+  opacity: 1;
+  height: auto;
+  overflow: visible;
+  transition: opacity 0.5s ease 0s;
+}
+#menu > ul > li:hover > ul {
+  left: 0;
+  top: 100%;
+}
+#menu > ul > li ul {
+  position: absolute;
+  left: 100%;
+}

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 # for build with debug:
+# cmake -DCMAKE_BUILD_TYPE=Debug .
 
 project(myCgi2 LANGUAGES CXX)
 
@@ -24,16 +25,36 @@ find_library(FCGI_LIBRARY NAMES fcgi)
 add_executable(${CMAKE_PROJECT_NAME}
   main.cpp
 
+  root.qml
+
+  utils.h
+
   RouterListen.cpp
   RouterListen.h
 
   Router.cpp
   Router.h
+  Router_ParseRequest.cpp
+#  Router_default.cpp
+#  Router_Js.cpp
+
+#  RouterDefault.cpp
+#  RouterDefault.h
+
+  RouterJs.cpp
+  RouterJs.h
+
+  RouterPost.cpp
+  RouterPost.h
 
   Obj.cpp
   Obj.h
+  ObjGlob.cpp
 
   Page.cpp
   Page.h
+
+  Chunk.cpp
+  Chunk.h
 )
 target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml)

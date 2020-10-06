@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Тег FORM, атрибут method</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/js/header.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h1>Hello, world! Obj.localCount() Obj.globCount() Obj.chunk("/chunks/chunk1.chunk")</h1>
+    <div id="menu">
+      Obj.script("/var/www/html/menu.qj")
+    </div>
+    <form action="/post/Obj.page('page')" method="post" onsubmit="send(this);return false">
+    <!-- <form action="Obj.page('page')" method="post"> -->
+    <!-- <form action="/put.unix" method="post" onsubmit="send(this);return false"> -->
+      <p><label for="">str1:</label><input type="text" name="str1">
+      <p><label for="">str2:</label><input type="text" name="str2">
+      <p><label for="">str3:</label><input type="text" name="str3">
+      <p><input type="submit" value="Отправить"></p>
+      Вы отпавили: <b>Obj.val("str1")</b><br>
+      Вы отпавили: <b>Obj.post("str1")</b>
+    </form>
+    <form action="Obj.page('url')" onsubmit="send(this);return false">
+     <p><input type="file" name="photo" required multiple
+       title="Загрузите одну или несколько фотографий"></p>
+     <p><input type="submit" value="Отправить"></p>
+    </form>
+    post: Obj.post("str1")
+    post: Obj.get("str1")
+    <main>
+    	Obj.file("/var/www/html/index1.html")
+    </main>
+    <script>
+      function send(f) {
+        // f - form
+        console.log(f)
+        let form = new FormData(f)
+        form.append("id","123");
+        var xhr = new XMLHttpRequest();//new URL(document.URL).pathname
+        xhr.open('POST', "/post" + new URL(f.action).pathname, true);
+        //xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+        xhr.onreadystatechange = function() {
+          if (this.readyState != 4) return;
+
+          console.log( this.responseText );
+        }
+
+        xhr.send(form);
+        f.reset();
+        f.outerHTML
+      }
+    </script>
+  </body>
+</html>
