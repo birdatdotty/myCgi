@@ -56,5 +56,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
   Chunk.cpp
   Chunk.h
+
+  ChangeLog
 )
 target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml)

@@ -24,17 +24,17 @@ curl --header "Content-Type: application/x-www-form-urlencoded"   --request POST
 #include <fcgi_stdio.h>
 
 #ifdef DEBUG
-#include <iostream>
-#include <QDebug>
+    #include <iostream>
+    #include <QDebug>
 #endif
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-#ifdef DEBUG
-    qInfo() << "DEBUG";
-#endif
+    #ifdef DEBUG
+        qInfo() << "DEBUG";
+    #endif
     if(FCGX_Init())
         exit(1); //Инициализируем библиотеку перед работой.
 

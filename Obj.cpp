@@ -77,18 +77,18 @@ void Obj::setMultipartFormData(QString strPostData, QString ContentType)
     QJsonObject obj;
 
     const char* boundary = ContentType.split('=').at(1).toUtf8();
-#ifdef DEBUG
-    std::cout << "boundary: [" << boundary << "]" << std::endl;
-#endif
+    #ifdef DEBUG
+        std::cout << "boundary: [" << boundary << "]" << std::endl;
+    #endif
 
     QString sBoundary = "--";
     QString eBoundary;
     sBoundary += boundary;
     eBoundary += sBoundary + "--";
 
-#ifdef DEBUG
-    qInfo() << "sBoundary: {" + sBoundary + "]";
-#endif
+    #ifdef DEBUG
+        qInfo() << "sBoundary: {" + sBoundary + "]";
+    #endif
 
     QString keyStr, value;
 
@@ -101,10 +101,9 @@ void Obj::setMultipartFormData(QString strPostData, QString ContentType)
 
     postData = obj;
 
-#ifdef DEBUG
-    qInfo() << __LINE__ << "postData:" << postData;
-#endif
-
+    #ifdef DEBUG
+        qInfo() << __LINE__ << "postData:" << postData;
+    #endif
 }
 
 void Obj::setPostData(FCGX_Request &req, int ContentLength)

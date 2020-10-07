@@ -17,10 +17,13 @@
 Router::Router(QString root, QObject *parent)
     : QObject(parent),
       root(root),
-      pageWatcher(new QFileSystemWatcher(this))
+      pageWatcher(new QFileSystemWatcher(this)),
+      chunkWatcher(new QFileSystemWatcher(this))
 {
     connect(pageWatcher, &QFileSystemWatcher::fileChanged,
             this, &Router::pageChanged);
+    connect(chunkWatcher, &QFileSystemWatcher::fileChanged,
+            this, &Router::chunkChanged);
 
     routes["js"] = new RouterJs(this);
     routes["post"] = new RouterPost(this);
@@ -50,34 +53,20 @@ void Router::request(FCGX_Request &req)
     /// url: /index.dsfsd
     QString _url = url(req);
 
-#ifdef DEBUG
-    qInfo() << "_url:" << _url;
-#endif
-//    if (startsWith("/js", _url))
-//        qInfo() << "TRUE";
-//    else
-//        qInfo() << "FALSE";
+    #ifdef DEBUG
+        qInfo() << "_method:" << _method;
+        qInfo() << "_url:" << _url;
+    #endif
 
-
-//    if (startsWith("/post", _url))
-//        routePost(req, _url, obj);
-//    else if (startsWith("/js", _url))
-//        routes["/js"]->route(req, _url, obj);
-////        routeJs(req, _url, obj);
-//    qInfo() << __LINE__ << "_url" << _url;
-//    if (routes.contains(_url))
-//        routes[_url]->route(req, _url, obj);
-//    else
-//        routeDefault(req, _url, obj);
     select(_url, _method)->route(req, _url, obj);
 }
 
 Router *Router::select(QString url, QString method)
 {
     QStringList urlList = url.split('/');
-#ifdef DEBUG
-    qInfo() << urlList;
-#endif
+    #ifdef DEBUG
+        qInfo() << urlList;
+    #endif
     if (urlList.size() > 1)
         if (routes.contains(urlList.at(1)))
             return routes[urlList.at(1)];
@@ -123,6 +112,7 @@ Page *Router::getPage(const char *url) {
         if (QFile::exists(file)) {
             pageWatcher->addPath( file );
             pages[url] = page;
+
         }
     }
     else page = pages[url];
@@ -137,8 +127,11 @@ QString Router::getChunk(QString url)
         QString file = root + url;
         _chunk = new Chunk(root, url);
         if (QFile::exists(file)) {
-            pageWatcher->addPath( file );
+            chunkWatcher->addPath( file );
             chunks[url] = _chunk;
+#ifdef DEBUG
+    qInfo() << "chunkWatcher->files():" << chunkWatcher->files();
+#endif
         }
     }
     else _chunk = chunks[url];
@@ -148,9 +141,9 @@ QString Router::getChunk(QString url)
 
 bool Router::route(FCGX_Request &req, QString url, Obj *obj)
 {
-#ifdef DEBUG
-    qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
-#endif
+    #ifdef DEBUG
+        qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
+    #endif
     setPostData(req, obj);
 
     //    Page *page = getPage(url);
@@ -185,18 +178,42 @@ void Router::pageChanged(const QString &path) {
     QString key = path;
     key = key.remove(0, root.size());
 
-#ifdef DEBUG
-    std::cout << "request: " << std::endl;
-    qInfo() << "path: [" + path + "]";
-    qInfo() << "key: [" + key + "]";
-#endif
+    #ifdef DEBUG
+        std::cout << "request: " << std::endl;
+        qInfo() << "path: [" + path + "]";
+        qInfo() << "key: [" + key + "]";
+    #endif
 
 
     if (pages.contains(key)) {
         pages.remove(key);
         pageWatcher->removePath(path);
-#ifdef DEBUG
-        qInfo() << path + " removed";
-#endif
+        #ifdef DEBUG
+            qInfo() << path + " removed";
+        #endif
+    }
+}
+
+void Router::chunkChanged(const QString &path)
+{
+    if (!path.startsWith(root))
+        return;
+
+    QString key = path;
+    key = key.remove(0, root.size());
+
+    #ifdef DEBUG
+        std::cout << "request: " << std::endl;
+        qInfo() << "path: [" + path + "]";
+        qInfo() << "key: [" + key + "]";
+    #endif
+
+
+    if (pages.contains(key)) {
+        chunks.remove(key);
+        chunkWatcher->removePath(path);
+        #ifdef DEBUG
+            qInfo() << path + " removed";
+        #endif
     }
 }

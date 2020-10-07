@@ -25,6 +25,7 @@ public:
 protected:
     QString root;
     QFileSystemWatcher* pageWatcher;
+    QFileSystemWatcher* chunkWatcher;
     QMap<QString, Page*> pages;
     QMap<QString, Chunk*> chunks;
     QMap<QString, Router*> routes;
@@ -53,6 +54,7 @@ protected:
 
 public slots:
     void pageChanged(const QString& path);
+    void chunkChanged(const QString& path);
     void request(FCGX_Request &req);
     void addRoute(Router* route) {}
 
