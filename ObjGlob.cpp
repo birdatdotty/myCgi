@@ -28,6 +28,7 @@ QString ObjGlob::auth(QString login, QString password)
             return "{auth:true,id:" + id + "}";
         }
     }
+
     return "{auth:false}";
 }
 
@@ -59,6 +60,7 @@ QString ObjGlob::getRandomString() const
 QString ObjGlob::chunk(QString key) {
     if (m_router)
         return m_router->getChunk(key);
-    return "indefined m_router";
+
+    return "indefined " + key;
 }
 

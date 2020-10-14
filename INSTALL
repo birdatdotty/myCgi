@@ -1,0 +1,25 @@
+### install deps for centos:
+dnf install cmake qt5-devel fcgi-devel
+
+# change dir:
+cd .../myCgi
+mkdir build
+cd build
+
+# build release:
+cmake ..
+make
+./myCgi2
+
+# build debug:
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+make
+./myCgi2
+
+# install:
+make install
+
+### open port if you use firewalld:
+firewall-cmd --get-active-zones # show zones
+firewall-cmd --zone=public --add-port=9000/tcp --permanent
+firewall-cmd --reload

@@ -14,19 +14,31 @@
 #include "RouterJs.h"
 #include "RouterPost.h"
 
+
 Router::Router(QString root, QObject *parent)
     : QObject(parent),
       root(root),
-      pageWatcher(new QFileSystemWatcher(this)),
-      chunkWatcher(new QFileSystemWatcher(this))
+      m_pageWatcher(new QFileSystemWatcher(this)),
+      m_chunkWatcher(new QFileSystemWatcher(this))
 {
-    connect(pageWatcher, &QFileSystemWatcher::fileChanged,
+    connect(m_pageWatcher, &QFileSystemWatcher::fileChanged,
             this, &Router::pageChanged);
-    connect(chunkWatcher, &QFileSystemWatcher::fileChanged,
+    connect(m_chunkWatcher, &QFileSystemWatcher::fileChanged,
             this, &Router::chunkChanged);
+}
 
-    routes["js"] = new RouterJs(this);
-    routes["post"] = new RouterPost(this);
+Router::Router(Router &parent) {
+    #ifdef DEBUG
+        qInfo() << "Router::Router(Router &parent)";
+    #endif
+    root = parent.root;
+}
+
+Router::Router(Router *router) {
+#ifdef DEBUG
+    qInfo() << "Router::Router(Router *router)";
+#endif
+    root = router->root;
 }
 
 QString Router::chunk(QString key) {
@@ -63,17 +75,25 @@ void Router::request(FCGX_Request &req)
 
 Router *Router::select(QString url, QString method)
 {
-    QStringList urlList = url.split('/');
     #ifdef DEBUG
-        qInfo() << urlList;
+        qInfo() << m_routes;
     #endif
-    if (urlList.size() > 1)
-        if (routes.contains(urlList.at(1)))
-            return routes[urlList.at(1)];
+    for (Router *route: m_routes) {
+        if (url.startsWith(route->getUrl())) {
+    #ifdef DEBUG
+        qInfo() << "OK:" << url;
+    #endif
+            return route;
+        }
+    }
 
     return this;
-    exit(-1);
-//    QString _url =
+}
+
+void Router::componentComplete() {
+#ifdef DEBUG
+    qInfo() << "Router::componentComplete";
+#endif
 }
 
 QJsonObject Router::str2json(QString str)
@@ -106,16 +126,16 @@ QJsonObject Router::str2json(QString str)
 
 Page *Router::getPage(const char *url) {
     Page *page;
-    if (!pages.contains(url)) {
+    if (!m_pages.contains(url)) {
         QString file = root + url;
         page = new Page(root, url);
         if (QFile::exists(file)) {
-            pageWatcher->addPath( file );
-            pages[url] = page;
+            m_pageWatcher->addPath( file );
+            m_pages[url] = page;
 
         }
     }
-    else page = pages[url];
+    else page = m_pages[url];
 
     return page;
 }
@@ -123,31 +143,36 @@ Page *Router::getPage(const char *url) {
 QString Router::getChunk(QString url)
 {
     Chunk* _chunk;
-    if (!chunks.contains(url)) {
+    if (!m_chunks.contains(url)) {
         QString file = root + url;
         _chunk = new Chunk(root, url);
         if (QFile::exists(file)) {
-            chunkWatcher->addPath( file );
-            chunks[url] = _chunk;
+            m_chunkWatcher->addPath( file );
+            m_chunks[url] = _chunk;
 #ifdef DEBUG
-    qInfo() << "chunkWatcher->files():" << chunkWatcher->files();
+    qInfo() << "chunkWatcher->files():" << m_chunkWatcher->files();
 #endif
         }
     }
-    else _chunk = chunks[url];
+    else _chunk = m_chunks[url];
 
     return _chunk->out();
 }
+
 
 bool Router::route(FCGX_Request &req, QString url, Obj *obj)
 {
     #ifdef DEBUG
         qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
+        qInfo() << "root:" << root;
     #endif
     setPostData(req, obj);
 
-    //    Page *page = getPage(url);
-    Page *page = getPage("/put.unix");
+    Page *page;
+    if (url == "/")
+        url = m_defaultPage;
+
+    page = getPage(url.toUtf8());
 
     QJsonObject json = str2json(getData(req));
     QJsonObject data;
@@ -185,9 +210,9 @@ void Router::pageChanged(const QString &path) {
     #endif
 
 
-    if (pages.contains(key)) {
-        pages.remove(key);
-        pageWatcher->removePath(path);
+    if (m_pages.contains(key)) {
+        m_pages.remove(key);
+        m_pageWatcher->removePath(path);
         #ifdef DEBUG
             qInfo() << path + " removed";
         #endif
@@ -209,9 +234,9 @@ void Router::chunkChanged(const QString &path)
     #endif
 
 
-    if (pages.contains(key)) {
-        chunks.remove(key);
-        chunkWatcher->removePath(path);
+    if (m_pages.contains(key)) {
+        m_chunks.remove(key);
+        m_chunkWatcher->removePath(path);
         #ifdef DEBUG
             qInfo() << path + " removed";
         #endif

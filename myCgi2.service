@@ -1,0 +1,10 @@
+[Unit]
+Description=test
+
+[Service]
+ExecStart=/usr/local/bin/myCgi2
+#Type=dbus
+#BusName=test.service
+
+[Install]
+WantedBy=multi-user.target

@@ -13,7 +13,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Core Qml REQUIRED)
+find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 IF(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -21,13 +21,23 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions( -DDEBUG )
 ENDIF()
 
+set(PROJ_CONF
+    "${CMAKE_INSTALL_PREFIX}/etc/${PROJECT_NAME}/root.qml")
+
+configure_file(config.h.in config.h)
+
+
 find_library(FCGI_LIBRARY NAMES fcgi)
 add_executable(${CMAKE_PROJECT_NAME}
   main.cpp
 
   root.qml
+  myCgi2.service
 
   utils.h
+
+  Service.cpp
+  Service.h
 
   RouterListen.cpp
   RouterListen.h
@@ -47,6 +57,9 @@ add_executable(${CMAKE_PROJECT_NAME}
   RouterPost.cpp
   RouterPost.h
 
+  RouterCss.cpp
+  RouterCss.h
+
   Obj.cpp
   Obj.h
   ObjGlob.cpp
@@ -58,5 +71,11 @@ add_executable(${CMAKE_PROJECT_NAME}
   Chunk.h
 
   ChangeLog
+  INSTALL
+  README.md
 )
-target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml)
+target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+
+install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
+install(FILES   root.qml              DESTINATION etc/${CMAKE_PROJECT_NAME})
+install(FILES   myCgi2.service        DESTINATION lib/systemd/system)

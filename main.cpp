@@ -8,9 +8,20 @@
 // http://chriswu.me/blog/getting-request-uri-and-content-in-c-plus-plus-fcgi/
 
 #include "Router.h"
+#include "RouterJs.h"
 #include "RouterListen.h"
+#include "RouterPost.h"
+#include "RouterCss.h"
+#include "Service.h"
+
+
 #include <QCoreApplication>
 #include <QJSEngine>
+
+#include <QQmlEngine>
+#include <QQmlComponent>
+
+#include "config.h"
 
 /**
 send post with curl:
@@ -38,19 +49,18 @@ int main(int argc, char *argv[])
     if(FCGX_Init())
         exit(1); //Инициализируем библиотеку перед работой.
 
-    //Глубина стека запросов
-    int listenQueueBacklog = 400;
+    qmlRegisterType<Service>("Service", 1,0, "Service");
+    qmlRegisterType<Router>("Service", 1,0, "Router");
 
-    //Задаем unix socket
-    const char* path = "/home/1/fcgi.sock";
+    qmlRegisterType<RouterCSS>("RouterCSS", 1,0, "RouterCSS");
+    qmlRegisterType<RouterJS>("RouterJS", 1,0, "RouterJS");
+    qmlRegisterType<RouterPost>("RouterPost", 1,0, "RouterPost");
 
-    // Создаем router для оброботки входящих соединений:
-    Router *router = new Router("/var/www/html/");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, QUrl(ETC_FILE));
+//    Service *service =
+            qobject_cast<Service *>(component.create());
 
-    // создаем и запускаем прослушивание в отдельном потоке:
-    RouterListen *routerListen = new RouterListen(path, listenQueueBacklog, router);
-    routerListen->start();
-    chmod(path, ALLPERMS);
 
 
     return app.exec();

@@ -67,12 +67,12 @@ void Obj::setPostJson(QString strPostData)
 
 void Obj::setMultipartFormData(QString strPostData, QString ContentType)
 {
-#ifdef DEBUG
-    qInfo() << "--------------------";
-    qInfo() << "void Obj::setMultipartFormData(QString strPostData):";
-    qInfo() << strPostData;
-    qInfo() << "--------------------";
-#endif
+    #ifdef DEBUG
+        qInfo() << "--------------------";
+        qInfo() << "void Obj::setMultipartFormData(QString strPostData):";
+        qInfo() << strPostData;
+        qInfo() << "--------------------";
+    #endif
 
     QJsonObject obj;
 

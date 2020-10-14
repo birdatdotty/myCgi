@@ -6,13 +6,10 @@
 #endif
 
 
-RouterJs::RouterJs(Router *parent)
-    : Router(parent)
-{
+RouterJS::RouterJS(Router *parent): Router(parent) {}
+RouterJS::RouterJS(QString root): Router(root) {}
 
-}
-
-bool RouterJs::route(FCGX_Request &req, QString url, Obj */*obj*/)
+bool RouterJS::route(FCGX_Request &req, QString url, Obj */*obj*/)
 {
 #ifdef DEBUG
     qInfo() << "bool RouterJs::route(FCGX_Request &req, QString url, Obj *obj)";

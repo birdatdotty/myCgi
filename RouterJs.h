@@ -3,14 +3,14 @@
 
 #include "Router.h"
 
-class RouterJs : public Router
+class RouterJS : public Router
 {
 public:
-    RouterJs(Router* parent = nullptr);
+    RouterJS(Router* parent);
+    RouterJS(QString root = "");
 
 protected:
     bool route(FCGX_Request &req, QString url, Obj *obj);
-
 };
 
 #endif // ROUTERJS_H

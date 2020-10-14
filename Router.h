@@ -10,6 +10,7 @@
 
 #include <QMap>
 #include <QFileSystemWatcher>
+#include <QQmlListProperty>
 
 class Page;
 class Chunk;
@@ -17,21 +18,54 @@ class Chunk;
 class Router : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString url READ getUrl WRITE setUrl NOTIFY sigUrl)
+    Q_PROPERTY(QString root READ getRoot WRITE setRoot NOTIFY sigRoot)
+    Q_PROPERTY(QString defaultPage READ getDefaultPage WRITE setDefaultPage NOTIFY sigDefaultPage)
+
 public:
-    explicit Router(QString root, QObject *parent = nullptr);
+    explicit Router(QString root = "", QObject *parent = nullptr);
+    explicit Router(Router& parent);
     QString chunk(QString key);
     QString getChunk(QString url);
 
-protected:
-    QString root;
-    QFileSystemWatcher* pageWatcher;
-    QFileSystemWatcher* chunkWatcher;
-    QMap<QString, Page*> pages;
-    QMap<QString, Chunk*> chunks;
-    QMap<QString, Router*> routes;
+    void setRoot(QString newRoot) {
+        root = newRoot;
+    }
+    QString getRoot() const {
+        return root;
+    }
+
+    void setUrl(QString newUrl) {
+        m_url = newUrl;
+    }
+    QString getUrl() const {
+        return m_url;
+    }
+
+    void setDefaultPage(QString newDefaultPage) {
+        m_defaultPage = newDefaultPage;
+    }
+    QString getDefaultPage() {
+        return m_defaultPage;
+    }
+
+
+signals:
+    void rootChanged();
+    void urlChanged();
 
 protected:
-    explicit Router(Router* router) {}
+    QString root;
+    QString m_url;
+    QFileSystemWatcher* m_pageWatcher;
+    QFileSystemWatcher* m_chunkWatcher;
+    QMap<QString, Page*> m_pages;
+    QMap<QString, Chunk*> m_chunks;
+    QMap<QString, Router*> m_routes;
+    Router* m_router;
+
+protected:
+    explicit Router(Router* router);
     QJsonObject str2json(QString str);
 
     Page* getPage(const char *url);
@@ -56,12 +90,23 @@ public slots:
     void pageChanged(const QString& path);
     void chunkChanged(const QString& path);
     void request(FCGX_Request &req);
-    void addRoute(Router* route) {}
+    void addRoute(QString name, Router* route) {
+        m_routes[name] = route;
+    }
 
 private:
     Router* select(QString url, QString method);
+    QList<Router *> _routes;
+    QString m_defaultPage;
 
 signals:
+    void sigDefaultPage();
+    void sigUrl();
+    void sigRoot();
+
+protected:
+    void componentComplete();
+
 };
 
 #endif // ROUTE_H

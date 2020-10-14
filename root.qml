@@ -1,21 +1,18 @@
-// Post, upload and Ws inherit Page
-import Post 1.0
-import Upload 1.0
+import Service 1.0
+import RouterCSS 1.0
+import RouterJS 1.0
+import RouterPost 1.0
 
-Router {
-  path: "/tmp/unix.socket"
-  root: "/var/www/html"
+Service {
+    id: main
+    root: "/home/1/"
+    // Глубина стека запросов
+    queue: 400
+    // Задаем socket
+    cgi: ":9000"
+    defaultPage: "/index.html"
 
-  Path {
-    url: "/post"
-    page: Post {data: getData}
-  }
-  Path {
-    url: "/upload"
-    page: Upload {data: getData; uri: uri}
-  }
-  Ws {
-    url: "/ws"
-    page: Ws {}
-  }
+    RouterCSS { root: main.root; url: "/css" }
+    RouterJS { root: main.root; url: "/js" }
+    RouterPost { root: main.root; url: "/post" }
 }
