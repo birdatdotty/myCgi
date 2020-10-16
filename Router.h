@@ -12,10 +12,12 @@
 #include <QFileSystemWatcher>
 #include <QQmlListProperty>
 
+#include "QMLTree.h"
+
 class Page;
 class Chunk;
 
-class Router : public QObject
+class Router : public QMLTree
 {
     Q_OBJECT
     Q_PROPERTY(QString url READ getUrl WRITE setUrl NOTIFY sigUrl)
@@ -61,7 +63,6 @@ protected:
     QFileSystemWatcher* m_chunkWatcher;
     QMap<QString, Page*> m_pages;
     QMap<QString, Chunk*> m_chunks;
-    QMap<QString, Router*> m_routes;
     Router* m_router;
 
 protected:
@@ -81,32 +82,21 @@ protected:
     void setPostData(FCGX_Request &req, Obj *obj);
 
     // routes:
-//    bool routePost(FCGX_Request &req, QString /*url*/, Obj* obj);
-//    bool routeDefault(FCGX_Request &req, const char* url, Obj* obj);
-//    bool routeJs(FCGX_Request &req, QString url, Obj* obj);
     virtual bool route(FCGX_Request &req, QString url, Obj *obj);
 
 public slots:
     void pageChanged(const QString& path);
     void chunkChanged(const QString& path);
     void request(FCGX_Request &req);
-    void addRoute(QString name, Router* route) {
-        m_routes[name] = route;
-    }
 
 private:
     Router* select(QString url, QString method);
-    QList<Router *> _routes;
     QString m_defaultPage;
 
 signals:
     void sigDefaultPage();
     void sigUrl();
     void sigRoot();
-
-protected:
-    void componentComplete();
-
 };
 
 #endif // ROUTE_H

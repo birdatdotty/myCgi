@@ -26,6 +26,22 @@ set(PROJ_CONF
 
 configure_file(config.h.in config.h)
 
+#include_directories()     fcgi Qt5::Core Qt5::Qml Qt5::Quick
+
+add_library(Router SHARED
+    Router.cpp
+    Router.h
+    Router_ParseRequest.cpp
+    Router_qml.cpp
+    QMLTree.cpp
+    QMLTree.h)
+target_link_libraries(Router fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+add_library(Obj SHARED
+    Obj.cpp
+    Obj.h
+    ObjGlob.cpp)
+target_link_libraries(Obj fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+
 
 find_library(FCGI_LIBRARY NAMES fcgi)
 add_executable(${CMAKE_PROJECT_NAME}
@@ -42,9 +58,6 @@ add_executable(${CMAKE_PROJECT_NAME}
   RouterListen.cpp
   RouterListen.h
 
-  Router.cpp
-  Router.h
-  Router_ParseRequest.cpp
 #  Router_default.cpp
 #  Router_Js.cpp
 
@@ -60,10 +73,6 @@ add_executable(${CMAKE_PROJECT_NAME}
   RouterCss.cpp
   RouterCss.h
 
-  Obj.cpp
-  Obj.h
-  ObjGlob.cpp
-
   Page.cpp
   Page.h
 
@@ -74,8 +83,15 @@ add_executable(${CMAKE_PROJECT_NAME}
   INSTALL
   README.md
 )
-target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+target_link_libraries(${CMAKE_PROJECT_NAME} Router Obj fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
+
+install(TARGETS Router                DESTINATION lib)
+install(FILES   Router.h QMLTree.h    DESTINATION include)
+
+install(TARGETS Obj                   DESTINATION lib)
+install(FILES   Obj.h                 DESTINATION include)
+
 install(FILES   root.qml              DESTINATION etc/${CMAKE_PROJECT_NAME})
 install(FILES   myCgi2.service        DESTINATION lib/systemd/system)

@@ -17,8 +17,8 @@ class Service : public QQuickItem
     Q_PROPERTY(QString root READ root WRITE setRoot NOTIFY sigRoot)
     Q_PROPERTY(QString defaultPage READ getDefaultPage WRITE setDefaultPage NOTIFY sigDefaultPage)
     Q_PROPERTY(int queue READ queue WRITE setQueue NOTIFY sigQueue)
-    Q_PROPERTY(QQmlListProperty<Router> guests READ guests)
-    Q_CLASSINFO("DefaultProperty", "guests")
+    Q_PROPERTY(QQmlListProperty<Router> routes READ routes)
+    Q_CLASSINFO("DefaultProperty", "routes")
 // ![0]
 public:
     Service(QQuickItem *parent = nullptr);
@@ -32,9 +32,9 @@ public:
     int queue() const;
     void setQueue(int newQueue);
 
-    QQmlListProperty<Router> guests();
-    int guestCount() const;
-    Router *guest(int) const;
+    QQmlListProperty<Router> routes();
+    int routeCount() const;
+    Router *route(int) const;
 
     Router* mainRouter();
 

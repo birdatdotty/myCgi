@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<RouterPost>("RouterPost", 1,0, "RouterPost");
 
     QQmlEngine engine;
+    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");
     QQmlComponent component(&engine, QUrl(ETC_FILE));
 //    Service *service =
             qobject_cast<Service *>(component.create());

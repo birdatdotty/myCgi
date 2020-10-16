@@ -14,9 +14,8 @@
 #include "RouterJs.h"
 #include "RouterPost.h"
 
-
 Router::Router(QString root, QObject *parent)
-    : QObject(parent),
+    : QMLTree(parent),
       root(root),
       m_pageWatcher(new QFileSystemWatcher(this)),
       m_chunkWatcher(new QFileSystemWatcher(this))
@@ -55,46 +54,43 @@ void Router::request(FCGX_Request &req)
 {
     Obj *obj = new Obj(this);
 
-    #ifdef DEBUG
-        std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
-        qInfo() << "request:";
-    #endif
+#ifdef DEBUG
+    std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
+    qInfo() << "request:";
+#endif
     // https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
     // GET, POST, maybe PUT, DELETE, HEAD, CONNECT, OPTIONS, TRACE, PATCH
     const char *_method = method(req);
     /// url: /index.dsfsd
     QString _url = url(req);
 
-    #ifdef DEBUG
-        qInfo() << "_method:" << _method;
-        qInfo() << "_url:" << _url;
-    #endif
+#ifdef DEBUG
+    qInfo() << "_method:" << _method;
+    qInfo() << "_url:" << _url;
+#endif
 
     select(_url, _method)->route(req, _url, obj);
 }
 
 Router *Router::select(QString url, QString method)
 {
-    #ifdef DEBUG
-        qInfo() << m_routes;
-    #endif
-    for (Router *route: m_routes) {
+    for (Router *route: _routes) {
         if (url.startsWith(route->getUrl())) {
-    #ifdef DEBUG
-        qInfo() << "OK:" << url;
-    #endif
+#ifdef DEBUG
+    qInfo() << "OK:" << url;
+#endif
             return route;
         }
+#ifdef DEBUG
+        else {
+            qInfo() << "NOT:" << url;
+        }
+#endif
     }
 
     return this;
 }
 
-void Router::componentComplete() {
-#ifdef DEBUG
-    qInfo() << "Router::componentComplete";
-#endif
-}
 
 QJsonObject Router::str2json(QString str)
 {
@@ -162,12 +158,17 @@ QString Router::getChunk(QString url)
 
 bool Router::route(FCGX_Request &req, QString url, Obj *obj)
 {
-    #ifdef DEBUG
-        qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
-        qInfo() << "root:" << root;
-    #endif
-    setPostData(req, obj);
+#ifdef DEBUG
+    qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
+    qInfo() << "root:" << root;
+    qInfo() << "_routes:" << _routes;
+    for(Router* router: _routes)
+        qInfo() << router << router->getUrl();
+#endif
+    for(Router* it: _routes)
+        if (url.startsWith(it->getUrl())) return it->route(req, url, obj);
 
+    setPostData(req, obj);
     Page *page;
     if (url == "/")
         url = m_defaultPage;
@@ -203,19 +204,19 @@ void Router::pageChanged(const QString &path) {
     QString key = path;
     key = key.remove(0, root.size());
 
-    #ifdef DEBUG
-        std::cout << "request: " << std::endl;
-        qInfo() << "path: [" + path + "]";
-        qInfo() << "key: [" + key + "]";
-    #endif
+#ifdef DEBUG
+    std::cout << "request: " << std::endl;
+    qInfo() << "path: [" + path + "]";
+    qInfo() << "key: [" + key + "]";
+#endif
 
 
     if (m_pages.contains(key)) {
         m_pages.remove(key);
         m_pageWatcher->removePath(path);
-        #ifdef DEBUG
-            qInfo() << path + " removed";
-        #endif
+#ifdef DEBUG
+    qInfo() << path + " removed";
+#endif
     }
 }
 
@@ -227,18 +228,17 @@ void Router::chunkChanged(const QString &path)
     QString key = path;
     key = key.remove(0, root.size());
 
-    #ifdef DEBUG
-        std::cout << "request: " << std::endl;
-        qInfo() << "path: [" + path + "]";
-        qInfo() << "key: [" + key + "]";
-    #endif
-
+#ifdef DEBUG
+    std::cout << "request: " << std::endl;
+    qInfo() << "path: [" + path + "]";
+    qInfo() << "key: [" + key + "]";
+#endif
 
     if (m_pages.contains(key)) {
         m_chunks.remove(key);
         m_chunkWatcher->removePath(path);
-        #ifdef DEBUG
-            qInfo() << path + " removed";
-        #endif
+#ifdef DEBUG
+    qInfo() << path + " removed";
+#endif
     }
 }

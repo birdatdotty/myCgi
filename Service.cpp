@@ -1,12 +1,14 @@
 #include "RouterListen.h"
 #include "Service.h"
 
-#include <QDebug>
+#ifdef DEBUG
+    #include <QDebug>
+    #include <iostream>
+#endif
 
 Service::Service(QQuickItem *parent)
 : QQuickItem(parent)
 {
-  qInfo() << "parent:" << parent;
 }
 
 QString Service::cgi() const
@@ -37,17 +39,17 @@ void Service::setQueue(int newQueue) {
     m_queue = newQueue;
 }
 
-QQmlListProperty<Router> Service::guests()
+QQmlListProperty<Router> Service::routes()
 {
     return QQmlListProperty<Router>(this, m_routes);
 }
 
-int Service::guestCount() const
+int Service::routeCount() const
 {
     return m_routes.count();
 }
 
-Router *Service::guest(int index) const
+Router *Service::route(int index) const
 {
     return m_routes.at(index);
 }
@@ -65,18 +67,21 @@ QString Service::getDefaultPage() {
 }
 
 void Service::componentComplete() {
-    qInfo() << "Service::componentComplete";
-    qInfo() << "Root:" << m_root;
-    qInfo() << "open FCGI on " << m_host;
+    #ifdef DEBUG
+        qInfo() << "Service::componentComplete";
+        qInfo() << "Root:" << m_root;
+        qInfo() << "open FCGI on " << m_host;
+    #endif
 
-    m_mainRouter = new Router(m_root);
-    m_mainRouter->setDefaultPage(m_defaultPage);
-    for (Router *route: m_routes) {
-        m_mainRouter->addRoute(route->getUrl(), route);
-    }
+//    m_mainRouter = new Router(m_root);
+//    m_mainRouter->setDefaultPage(m_defaultPage);
+//    for (Router *route: m_routes) {
+//        m_mainRouter->addRoute(route->getUrl(), route);
+//    }
 
     // создаем и запускаем прослушивание в отдельном потоке:
-    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_mainRouter);
+//    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_mainRouter);
+    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_routes.at(0));
     routerListen->start();
 
 }
