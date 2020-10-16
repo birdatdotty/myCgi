@@ -32,6 +32,6 @@
 *.app
 
 # My build
-build/
-CMakeLists.txt.autosave
-CMakeLists.txt.user
+*build/
+*CMakeLists.txt.autosave
+*CMakeLists.txt.user
