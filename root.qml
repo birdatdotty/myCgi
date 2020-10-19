@@ -1,7 +1,8 @@
 import Service 1.0
-import RouterCSS 1.0
-import RouterJS 1.0
-import RouterPost 1.0
+//import RouterCSS 1.0
+//import RouterJS 1.0
+//import RouterPost 1.0
+import ClassicHTML 1.0
 
 //Service {
 //    id: main

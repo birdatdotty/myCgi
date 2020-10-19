@@ -7,11 +7,11 @@
 // http://cgi.sourceforge.net/docs/fastcgi___cgi/tutorial/fastcgi.html
 // http://chriswu.me/blog/getting-request-uri-and-content-in-c-plus-plus-fcgi/
 
-#include "Router.h"
-#include "RouterJs.h"
+//#include "Router.h"
+//#include "RouterJS.h"
 #include "RouterListen.h"
-#include "RouterPost.h"
-#include "RouterCss.h"
+//#include "RouterPost.h"
+//#include "RouterCss.h"
 #include "Service.h"
 
 
@@ -50,19 +50,37 @@ int main(int argc, char *argv[])
         exit(1); //Инициализируем библиотеку перед работой.
 
     qmlRegisterType<Service>("Service", 1,0, "Service");
-    qmlRegisterType<Router>("Service", 1,0, "Router");
-
-    qmlRegisterType<RouterCSS>("RouterCSS", 1,0, "RouterCSS");
-    qmlRegisterType<RouterJS>("RouterJS", 1,0, "RouterJS");
-    qmlRegisterType<RouterPost>("RouterPost", 1,0, "RouterPost");
 
     QQmlEngine engine;
-    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");
-    QQmlComponent component(&engine, QUrl(ETC_FILE));
-//    Service *service =
-            qobject_cast<Service *>(component.create());
+//    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");
+    engine.setImportPathList(QStringList() << "/usr/local/lib/myCgi2/plugins/");
 
+    QString qmlFile;
+    if (argc == 1)
+        qmlFile = ETC_FILE;
+    else
+        qmlFile = argv[1];
 
+    QQmlComponent component(&engine, QUrl(qmlFile));
+
+    if (component.status() != QQmlComponent::Status::Ready)
+    {
+        qDebug() << "Component status is not ready";
+
+        foreach(QQmlError err, component.errors())
+        {
+            qInfo() << engine.importPathList();
+            qInfo() << "Description: " << err.description() << "\n\n";
+            qDebug() << err.toString();
+        }
+
+        qDebug() << component.errorString();
+        return -1;
+    }
+    else
+    {
+        component.create();
+    }
 
     return app.exec();
 }

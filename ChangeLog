@@ -13,3 +13,9 @@
 
 ### Added
 - add myCgi2.service for systemd, but with static ExecStart
+
+## [0.2.0] - 2020-10-19
+### restruct
+- I  finished struct of project
+- Config file - it's qml component of server set of settings
+- qml modules - it's routes for build web page
