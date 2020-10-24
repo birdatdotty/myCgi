@@ -4,6 +4,7 @@
 #include <QJSEngine>
 
 #include "Obj.h"
+#include "ObjGlob.h"
 
 #ifdef DEBUG
     #include <QDebug>
@@ -14,14 +15,9 @@
 Page::Page(QStringList list, QObject *parent)
     : QObject(parent),
       list(list),
-      m_exist(true)
-{
-    engine = new QJSEngine;
-    obj = new Obj;
-
-    QJSValue jsObj = engine->newQObject(obj);
-    engine->globalObject().setProperty("Obj", jsObj);
-}
+      m_exist(true),
+      engine(new QJSEngine)
+{}
 
 Page::Page(QString prefix, QString url, QObject *parent)
     : QObject(parent)
@@ -54,12 +50,19 @@ Page::Page(QString prefix, QString url, QObject *parent)
     list << str.mid(s);
 }
 
-QString Page::out(Obj* obj) const
+QString Page::out(ObjGlob *glob, Request* obj) const
 {
     QJSEngine engine;
     QJSValue jsObj = engine.newQObject(obj);
-//    QJSValue jsData = engine.newQObject(obj->getObj());
+    QJSValue jsObjGlob = engine.newQObject(glob);
+
     engine.globalObject().setProperty("Obj", jsObj);
+    engine.globalObject().setProperty("GlobObj", jsObjGlob);
+
+#ifdef DEBUG
+    qInfo() << "glob:" << glob;
+    qInfo() << "glob->count():" << glob->count();
+#endif
 
 
     QString ret = "Content-type: text/html\n\n";

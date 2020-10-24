@@ -28,13 +28,21 @@ Service {
     defaultPage: "/index.html"
 
     Router {
+        id:r1
+        objGlob: ObjGlob {
+            defaultPage: "/index.html"
+            chunks: main.root + "/chunks"
+            scripts: main.root + "/scripts"
+        }
+
         root: main.root + "/html";
         url: "/";
         defaultPage: "/index.html"
 
         RouterCSS {
-             root: main.root
-             url: "/css"
+            objGlob: r1.objGlob
+            root: main.root
+            url: "/css"
         }
         RouterJS {
             root: main.root;

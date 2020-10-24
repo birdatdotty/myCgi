@@ -2,6 +2,7 @@
 #define ROUTERJS_H
 
 #include "Router.h"
+#include "Obj.h"
 
 class RouterJS : public Router
 {
@@ -10,7 +11,7 @@ public:
     RouterJS(QString root = "");
 
 protected:
-    bool route(FCGX_Request &req, QString url, Obj *obj);
+    bool route(FCGX_Request &req, QString url, Request *obj);
 };
 
 #endif // ROUTERJS_H

@@ -9,10 +9,10 @@
 RouterJS::RouterJS(Router *parent): Router(parent) {}
 RouterJS::RouterJS(QString root): Router(root) {}
 
-bool RouterJS::route(FCGX_Request &req, QString url, Obj */*obj*/)
+bool RouterJS::route(FCGX_Request &req, QString url, Request */*obj*/)
 {
 #ifdef DEBUG
-    qInfo() << "bool RouterJs::route(FCGX_Request &req, QString url, Obj *obj)";
+    qInfo() << "bool RouterJS::route(FCGX_Request &req, QString url, Obj *obj)";
 #endif
     QByteArray pageOut = "Content-type: application/javascript\n\n";
     if (url.startsWith("/js/header.js")) {

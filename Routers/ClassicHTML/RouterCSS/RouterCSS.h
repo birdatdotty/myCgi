@@ -3,6 +3,8 @@
 
 #include "Router.h"
 
+#include <QMap>
+
 class RouterCSS : public Router
 {
 public:
@@ -12,14 +14,15 @@ public:
 
 
 protected:
-    bool route(FCGX_Request &req, QString url, Obj *obj);
+    bool route(FCGX_Request &req, QString url, Request *obj);
 
 private:
     QFileSystemWatcher* cssWatcher;
     bool read(QString file);
-    QString out() const;
-    bool sass(QString &file);
+    QString out(QString file) const;
+
     bool css(QString &file);
+    QMap<QString,QString> files;
 
     QString cssFile;
 };

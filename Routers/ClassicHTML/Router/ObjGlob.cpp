@@ -1,3 +1,4 @@
+#include "ObjGlob.h"
 #include "Obj.h"
 
 #include "Router.h"
@@ -7,9 +8,10 @@
     #include <iostream>
 #endif
 
-
 ObjGlob::ObjGlob(Router *router)
     : QObject(nullptr),
+      Chunks(router),
+      Scripts(router),
       m_router(router),
       m_count(20)
 {
@@ -42,10 +44,9 @@ int ObjGlob::count()
     return ++m_count;
 }
 
-QString ObjGlob::getRandomString() const
+QString ObjGlob::getRandomString(int randomStringLength) const
 {
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-    const int randomStringLength = 12; // assuming you want random strings of 12 characters
 
     QString randomString;
     for(int i=0; i<randomStringLength; ++i)
@@ -57,10 +58,6 @@ QString ObjGlob::getRandomString() const
     return randomString;
 }
 
-QString ObjGlob::chunk(QString key) {
-    if (m_router)
-        return m_router->getChunk(key);
-
-    return "indefined " + key;
-}
+void ObjGlob::setRoot(QString newRoot)  { m_root = newRoot; }
+QString ObjGlob::getRoot() const { return m_root; }
 

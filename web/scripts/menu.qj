@@ -1,22 +1,22 @@
 // const onclick
 var menuSrc = [
-  {"name":"put.unix", "href":"/put.unix", "sub":[]},
-  {"name":"info", "href":"/info", "sub":[
-    {"name":"item-2-1", "href":"/info/a.unix", "sub":[]},
-    {"name":"item-2-2", "href":"/info/b.unix", "sub":[]},
-    {"name":"item-2-3", "href":"/info/c.unix", "sub":[
-      {"name":"item-2-3-1", "href":"/info/c/i1.unix", "sub":[]},
-      {"name":"item-2-3-2", "href":"/info/c/i2.unix", "sub":[]},
-      {"name":"item-2-3-3", "href":"/info/c/i3.unix", "sub":[]}
+  {"name":"Главная", "href":"/index.html", "sub":[]},
+  {"name":"info2", "href":"/info", "sub":[
+    {"name":"item-2-1", "href":"#/info/a.html", "sub":[]},
+    {"name":"item-2-2", "href":"#/info/b.html", "sub":[]},
+    {"name":"item-2-3", "href":"#/info/c.html", "sub":[
+      {"name":"item-2-3-1", "href":"#/info/c/i1.html", "sub":[]},
+      {"name":"item-2-3-2", "href":"#/info/c/i2.html", "sub":[]},
+      {"name":"item-2-3-3", "href":"#/info/c/i3.html", "sub":[]}
     ]},
     {"name":"/info/d", "href": "/info/d", "sub":[
-      {"name":"item-2-4-1", "href":"/info/d/a1.unix", "sub":[]},
-      {"name":"item-2-4-2", "href":"/info/d/a2.unix", "sub":[]},
-      {"name":"item-2-4-3", "href":"/info/d/a3.unix", "sub":[]}
+      {"name":"item-2-4-1", "href":"#/info/d/a1.html", "sub":[]},
+      {"name":"item-2-4-2", "href":"#/info/d/a2.html", "sub":[]},
+      {"name":"item-2-4-3", "href":"#/info/d/a3.html", "sub":[]}
     ]}
   ]},
   {"name":"item-3", "href":"#item-3", "sub":[]},
-  {"name":"item-4", "href":"#item-4", "sub":[]},
+  {"name":"test", "href":"/test.html", "sub":[]},
   {"name":"form", "href":"#item-5", "sub":[
     {"name":"item-2-4-3", "href":"#item-2-4-3", "sub":[]}
   ]}
@@ -52,6 +52,6 @@ function buildFromJson(block) {
   return ret;
 }
 //class="active"
-let str = "<ul>" + buildFromJson(menuSrc) + "</ul>" + "\n\n<b>chunk: " + Obj.chunk("/chunks/chunk2.chunk") + "</b>"
+let str = "<ul>" + buildFromJson(menuSrc) + "</ul>"
 //console.log(str)
 str

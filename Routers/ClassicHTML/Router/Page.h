@@ -5,7 +5,8 @@
 
 
 class QJSEngine;
-class Obj;
+class Request;
+class ObjGlob;
 
 class Page : public QObject
 {
@@ -14,7 +15,7 @@ public:
     enum TYPE{HTML,JS,CSS};
     explicit Page(QStringList list, QObject *parent = nullptr);
     explicit Page(QString prefix, QString url, QObject *parent = nullptr);
-    QString out(Obj *obj) const;
+    QString out(ObjGlob *glob, Request *obj) const;
     bool exist();
 
 private:
@@ -22,7 +23,7 @@ private:
     bool m_exist;
 
     QJSEngine *engine;
-    Obj *obj;
+    Request *obj;
 
 
 signals:

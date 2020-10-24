@@ -83,5 +83,4 @@ void Service::componentComplete() {
 //    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_mainRouter);
     RouterListen *routerListen = new RouterListen(cgi(), queue(), m_routes.at(0));
     routerListen->start();
-
 }

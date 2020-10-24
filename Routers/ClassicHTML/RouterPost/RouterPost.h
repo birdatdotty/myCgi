@@ -10,7 +10,7 @@ public:
     RouterPost(QString root = ""): Router(root) {}
 
 protected:
-    bool route(FCGX_Request &req, QString url, Obj *obj);
+    bool route(FCGX_Request &req, QString url, Request *obj);
 };
 
 #endif // ROUTERPOST_H

@@ -14,13 +14,10 @@
 Router::Router(QString root, QObject *parent)
     : QMLTree(parent),
       root(root),
-      m_pageWatcher(new QFileSystemWatcher(this)),
-      m_chunkWatcher(new QFileSystemWatcher(this))
+      m_pageWatcher(new QFileSystemWatcher(this))
 {
     connect(m_pageWatcher, &QFileSystemWatcher::fileChanged,
             this, &Router::pageChanged);
-    connect(m_chunkWatcher, &QFileSystemWatcher::fileChanged,
-            this, &Router::chunkChanged);
 }
 
 Router::Router(Router &parent) {
@@ -37,22 +34,14 @@ Router::Router(Router *router) {
     root = router->root;
 }
 
-QString Router::chunk(QString key) {
-    return "Router::chunk " + key;
-}
-
-//QString Router::chunk(QString key)
-//{
-//    QString ret = "QString Router::chunk(QString key):" + key;
-//    return ret;
-//}
-
 void Router::request(FCGX_Request &req)
 {
-    Obj *obj = new Obj(this);
+//    Obj *obj = new Obj(this);
+    Request *obj = new Request(req, m_globObject);
 
 #ifdef DEBUG
     std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
+//    qInfo() << "Obj.url():" << obj->url();
     qInfo() << "request:";
 #endif
     // https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
@@ -74,7 +63,7 @@ Router *Router::select(QString url, QString method)
     for (Router *route: _routes) {
         if (url.startsWith(route->getUrl())) {
 #ifdef DEBUG
-    qInfo() << "OK:" << url;
+    qInfo() << "OK:" << url << route;
 #endif
             return route;
         }
@@ -133,27 +122,20 @@ Page *Router::getPage(const char *url) {
     return page;
 }
 
-QString Router::getChunk(QString url)
-{
-    Chunk* _chunk;
-    if (!m_chunks.contains(url)) {
-        QString file = root + url;
-        _chunk = new Chunk(root, url);
-        if (QFile::exists(file)) {
-            m_chunkWatcher->addPath( file );
-            m_chunks[url] = _chunk;
-#ifdef DEBUG
-    qInfo() << "chunkWatcher->files():" << m_chunkWatcher->files();
-#endif
-        }
-    }
-    else _chunk = m_chunks[url];
+void Router::setRoot(QString newRoot) { root = newRoot; }
+QString Router::getRoot() const { return root; }
 
-    return _chunk->out();
-}
+void Router::setUrl(QString newUrl) { m_url = newUrl; }
+QString Router::getUrl() const { return m_url; }
+
+void Router::setDefaultPage(QString newDefaultPage) { m_defaultPage = newDefaultPage; }
+QString Router::getDefaultPage() { return m_defaultPage; }
+
+void Router::setObjGlob(ObjGlob *newObj) { m_globObject = newObj; }
+ObjGlob *Router::getObjGlob() const { return m_globObject; }
 
 
-bool Router::route(FCGX_Request &req, QString url, Obj *obj)
+bool Router::route(FCGX_Request &req, QString url, Request *obj)
 {
 #ifdef DEBUG
     qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
@@ -163,7 +145,8 @@ bool Router::route(FCGX_Request &req, QString url, Obj *obj)
         qInfo() << router << router->getUrl();
 #endif
     for(Router* it: _routes)
-        if (url.startsWith(it->getUrl())) return it->route(req, url, obj);
+        if (url.startsWith(it->getUrl()))
+            return it->route(req, url, obj);
 
     setPostData(req, obj);
     Page *page;
@@ -180,7 +163,7 @@ bool Router::route(FCGX_Request &req, QString url, Obj *obj)
     data["url"] = url;
 
     obj->set(data);
-    QByteArray pageOut = page->out(obj).toUtf8();
+    QByteArray pageOut = page->out(getObjGlob(), obj).toUtf8();
 
     // Завершаем запрос
     // DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);
@@ -217,25 +200,4 @@ void Router::pageChanged(const QString &path) {
     }
 }
 
-void Router::chunkChanged(const QString &path)
-{
-    if (!path.startsWith(root))
-        return;
 
-    QString key = path;
-    key = key.remove(0, root.size());
-
-#ifdef DEBUG
-    std::cout << "request: " << std::endl;
-    qInfo() << "path: [" + path + "]";
-    qInfo() << "key: [" + key + "]";
-#endif
-
-    if (m_pages.contains(key)) {
-        m_chunks.remove(key);
-        m_chunkWatcher->removePath(path);
-#ifdef DEBUG
-    qInfo() << path + " removed";
-#endif
-    }
-}

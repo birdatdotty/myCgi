@@ -61,7 +61,7 @@ int Router::contentLength(FCGX_Request &req) {
     return _contentLength;
 }
 
-void Router::setPostData(FCGX_Request &req, Obj* obj) {
+void Router::setPostData(FCGX_Request &req, Request *obj) {
     int _contentLength;
     if ((_contentLength = contentLength(req)) > 0)
         obj->setPostData(req, _contentLength);

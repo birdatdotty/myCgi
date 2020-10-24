@@ -19,3 +19,6 @@
 - I  finished struct of project
 - Config file - it's qml component of server set of settings
 - qml modules - it's routes for build web page
+
+## [0.2.1] - 2020-10-22
+- ObjGlob greate in config (qml file) and set in Route

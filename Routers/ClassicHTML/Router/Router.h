@@ -13,44 +13,48 @@
 #include <QQmlListProperty>
 
 #include "QMLTree.h"
-
-class Page;
-class Chunk;
+#include "Page.h"
+#include "Chunk.h"
 
 class Router : public QMLTree
 {
     Q_OBJECT
-    Q_PROPERTY(QString url READ getUrl WRITE setUrl NOTIFY sigUrl)
-    Q_PROPERTY(QString root READ getRoot WRITE setRoot NOTIFY sigRoot)
-    Q_PROPERTY(QString defaultPage READ getDefaultPage WRITE setDefaultPage NOTIFY sigDefaultPage)
+    Q_PROPERTY(QString  url
+               READ getUrl
+               WRITE setUrl
+               NOTIFY sigUrl)
+
+    Q_PROPERTY(QString  root
+               READ getRoot
+               WRITE setRoot
+               NOTIFY sigRoot)
+
+    Q_PROPERTY(ObjGlob* objGlob
+               READ getObjGlob
+               WRITE setObjGlob
+               NOTIFY sigObjGlob)
+
+    Q_PROPERTY(QString  defaultPage
+               READ getDefaultPage
+               WRITE setDefaultPage
+               NOTIFY sigDefaultPage)
+
 
 public:
     explicit Router(QString root = "", QObject *parent = nullptr);
     explicit Router(Router& parent);
-    QString chunk(QString key);
-    QString getChunk(QString url);
 
-    void setRoot(QString newRoot) {
-        root = newRoot;
-    }
-    QString getRoot() const {
-        return root;
-    }
+    void setRoot(QString newRoot);
+    QString getRoot() const;
 
-    void setUrl(QString newUrl) {
-        m_url = newUrl;
-    }
-    QString getUrl() const {
-        return m_url;
-    }
+    void setUrl(QString newUrl);
+    QString getUrl() const;
 
-    void setDefaultPage(QString newDefaultPage) {
-        m_defaultPage = newDefaultPage;
-    }
-    QString getDefaultPage() {
-        return m_defaultPage;
-    }
+    void setDefaultPage(QString newDefaultPage);
+    QString getDefaultPage();
 
+    void setObjGlob(ObjGlob* newObj);
+    ObjGlob* getObjGlob() const;
 
 signals:
     void rootChanged();
@@ -60,9 +64,7 @@ protected:
     QString root;
     QString m_url;
     QFileSystemWatcher* m_pageWatcher;
-    QFileSystemWatcher* m_chunkWatcher;
     QMap<QString, Page*> m_pages;
-    QMap<QString, Chunk*> m_chunks;
     Router* m_router;
 
 protected:
@@ -79,24 +81,25 @@ protected:
     const char *getData(FCGX_Request &req);
     const char *contentType(FCGX_Request &req);
     int contentLength(FCGX_Request &req);
-    void setPostData(FCGX_Request &req, Obj *obj);
+    void setPostData(FCGX_Request &req, Request *obj);
 
     // routes:
-    virtual bool route(FCGX_Request &req, QString url, Obj *obj);
+    virtual bool route(FCGX_Request &req, QString url, Request *obj);
 
 public slots:
     void pageChanged(const QString& path);
-    void chunkChanged(const QString& path);
     void request(FCGX_Request &req);
 
 private:
     Router* select(QString url, QString method);
+    ObjGlob* m_globObject;
     QString m_defaultPage;
 
 signals:
     void sigDefaultPage();
     void sigUrl();
     void sigRoot();
+    void sigObjGlob();
 };
 
 #endif // ROUTE_H

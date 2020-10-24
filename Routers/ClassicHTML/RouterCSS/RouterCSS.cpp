@@ -20,15 +20,15 @@ RouterCSS::RouterCSS(QString root)
       cssWatcher(new QFileSystemWatcher)
 {}
 
-bool RouterCSS::route(FCGX_Request &req, QString url, Obj */*obj*/)
+bool RouterCSS::route(FCGX_Request &req, QString url, Request */*obj*/)
 {
 #ifdef DEBUG
-    qInfo() << "bool RouterCSS::route(FCGX_Request &req, QString url, Obj *obj)";
-    #endif
+    qInfo() << "bool RouterCSS::route(FCGX_Request &req, QString url, Request *obj)";
+#endif
     read(root + url);
 
     QByteArray pageOut = "Content-type: text/css\n\n";
-    pageOut += out();
+    pageOut += out(root + url);
 //    pageOut += obj->chunk("/style.css");
 
     // Завершаем запрос
@@ -50,8 +50,6 @@ bool RouterCSS::read(QString file)
     if (!cssWatcher->files().contains(file)) {
         if (file.endsWith(".css"))
             RouterCSS::css(file);
-        else if (file.endsWith(".sass"))
-            RouterCSS::sass(file);
         else
             return false;
     }
@@ -59,30 +57,16 @@ bool RouterCSS::read(QString file)
     return true;
 }
 
-QString RouterCSS::out() const {
-    return cssFile;
-}
-
-bool RouterCSS::sass(QString &file)
-{
-    QProcess sass;
-    sass.start("sass", QStringList() << file);
-
-    sass.waitForFinished();
-    cssFile = sass.readAllStandardOutput();
-    cssWatcher->addPath(file);
-
-    return true;
+QString RouterCSS::out(QString file) const {
+    return files[file];
 }
 
 bool RouterCSS::css(QString &file)
 {
     QFile f(file);
-    if (!f.open(QIODevice::ReadOnly))
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
 
-    cssFile = f.readAll();
-    cssWatcher->addPath(file);
-
+    files[file] = f.readAll();
     return true;
 }

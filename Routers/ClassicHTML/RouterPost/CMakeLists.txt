@@ -15,6 +15,8 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions( -DDEBUG )
 ENDIF()
 
+include_directories(../Router)
+
 add_library(RouterPost STATIC
   RouterPost.cpp
   RouterPost.h)

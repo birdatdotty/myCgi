@@ -18,22 +18,31 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
 ENDIF()
 
 add_library(Router STATIC
-    Chunk.cpp
     Page.cpp
     QMLTree.cpp
     Router.cpp
     Router_ParseRequest.cpp
 
     Obj.cpp
-    ObjGlob.cpp
+    Obj.h
 
+    ObjGlob.cpp
+    ObjGlob.h
+
+    Chunk.cpp
     Chunk.h
+
+    Script.cpp
+    Script.h
+
     Page.h
     QMLTree.h
     Router.h
     utils.h
 
-    Obj.h)
+
+    DefaultPage.cpp
+    DefaultPage.h)
 
 target_link_libraries(Router fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 

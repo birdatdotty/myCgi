@@ -1,5 +1,8 @@
 #include "Obj.h"
+#include "ObjGlob.h"
 #include "utils.h"
+
+#include "Router.h"
 
 #ifdef DEBUG
     #include <QDebug>
@@ -11,20 +14,21 @@
 #include <QJsonDocument>
 
 
-Obj::Obj(Router *parent)
-    : QObject(nullptr),
-      m_count(10)
-{
-    static ObjGlob* _glob = new ObjGlob(parent);
 
-    glob = _glob;
-}
+//Request::Obj(Router *parent)
+//    : QObject(nullptr)
+//{
+////    static ObjGlob* _glob = new ObjGlob(parent);
+//    static ObjGlob* _glob = parent->getObjGlob();
 
-void Obj::set(QJsonObject &newObj) {
+//    glob = _glob;
+//}
+
+void Request::set(QJsonObject &newObj) {
     obj = newObj;
 }
 
-void Obj::setPostUrlencoded(QString strPostData)
+void Request::setPostUrlencoded(QString strPostData)
 {
     QJsonObject obj;
     /// get: login=asd&ss=dd
@@ -51,10 +55,10 @@ void Obj::setPostUrlencoded(QString strPostData)
     postData = obj;
 }
 
-void Obj::setPostJson(QString strPostData)
+void Request::setPostJson(QString strPostData)
 {
     #ifdef DEBUG
-        qInfo() << "void Obj::setPostJson(QString strPostData)" << strPostData;
+        qInfo() << "void Request::setPostJson(QString strPostData)" << strPostData;
     #endif
 
     QJsonDocument doc = QJsonDocument::fromJson(strPostData.toUtf8());
@@ -65,11 +69,11 @@ void Obj::setPostJson(QString strPostData)
     #endif
 }
 
-void Obj::setMultipartFormData(QString strPostData, QString ContentType)
+void Request::setMultipartFormData(QString strPostData, QString ContentType)
 {
     #ifdef DEBUG
         qInfo() << "--------------------";
-        qInfo() << "void Obj::setMultipartFormData(QString strPostData):";
+        qInfo() << "void Request::setMultipartFormData(QString strPostData):";
         qInfo() << strPostData;
         qInfo() << "--------------------";
     #endif
@@ -106,7 +110,7 @@ void Obj::setMultipartFormData(QString strPostData, QString ContentType)
     #endif
 }
 
-void Obj::setPostData(FCGX_Request &req, int ContentLength)
+void Request::setPostData(FCGX_Request &req, int ContentLength)
 {
     const char *ContentType = FCGX_GetParam("CONTENT_TYPE", req.envp);
 
@@ -129,11 +133,11 @@ void Obj::setPostData(FCGX_Request &req, int ContentLength)
     free(postData);
 }
 
-void Obj::update(Obj *newObj) {
+void Request::update(Request *newObj) {
     obj = newObj->obj;
 }
 
-QString Obj::body() {
+QString Request::body() {
     if (obj["page"] == "/pass.unix")
         return "<h1>Page: /pass.unix</h1>";
 
@@ -143,38 +147,38 @@ QString Obj::body() {
     return "<h1>NO BODY</h1>";
 }
 
-QString Obj::val(QString key) {
+QString Request::val(QString key) {
     return postData[key].toString("").toHtmlEscaped();
 }
 
-QString Obj::page(QString key)
+QString Request::page(QString key)
 {
     return obj[key].toString("").toHtmlEscaped();
 }
 
-QString Obj::script(QString file)
-{
-    QString ret;
-    QFile qj(file);
+//QString Request::script(QString file)
+//{
+//    QString ret;
+//    QFile qj(file);
 
-    if (qj.open(QIODevice::ReadOnly)) {
-        QString script = qj.readAll();
-        QJSEngine engine;
+//    if (qj.open(QIODevice::ReadOnly)) {
+//        QString script = qj.readAll();
+//        QJSEngine engine;
 
-        Obj self;
-        self.obj = obj;
-        QJSValue jsObj = engine.newQObject(&self);
-        engine.globalObject().setProperty("Obj", jsObj);
+//        Obj self;
+//        self.obj = obj;
+//        QJSValue jsObj = engine.newQObject(&self);
+//        engine.globalObject().setProperty("Obj", jsObj);
 
-        ret = engine.evaluate(script).toString();
+//        ret = engine.evaluate(script).toString();
 
-        qj.close();
-    }
+//        qj.close();
+//    }
 
-    return ret;
-}
+//    return ret;
+//}
 
-QString Obj::file(QString file)
+QString Request::file(QString file)
 {
     QString ret;
     QFile qj(file);
@@ -186,20 +190,39 @@ QString Obj::file(QString file)
     return ret;
 }
 
-QString Obj::post(QString key) {
+QString Request::post(QString key) {
     return postData[key].toString("");
 }
 
-QString Obj::get(QString key) {
+QString Request::get(QString key) {
     return obj["get"].toObject()[key].toString("");
 }
 
-bool Obj::testPath(QString key, QString value) {
-    if (obj[key].toString("").startsWith(value))
+bool Request::testPath(QString key, QString value) {
+#ifdef DEBUG
+    qInfo() << "bool Request::testPath(QString key, QString value)";
+    qInfo() << "key:" << key;
+    qInfo() << "obj:" << obj;
+    qInfo() << __LINE__ << glob->getDefaultPage();
+    qInfo() << __LINE__ << url();
+    qInfo() << "value:" << value;
+    qInfo() << "bool Request::testPath(QString key, QString value)";
+#endif
+
+    QString _url = url();
+    if ( _url == "/" )
+        _url = glob->getDefaultPage();
+
+    if (_url.startsWith(value))
         return true;
 
     return false;
 }
 
+int Request::localCount() { return ++m_count; }
+int Request::globCount() { return glob->count(); }
 
+QString Request::chunk(ObjGlob *glob, QString url) { return glob->chunk(url); }
+
+QString Request::script(ObjGlob *glob, QString file) { return glob->script(this, file); }
 
