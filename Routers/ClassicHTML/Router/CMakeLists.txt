@@ -23,8 +23,8 @@ add_library(Router STATIC
     Router.cpp
     Router_ParseRequest.cpp
 
-    Obj.cpp
-    Obj.h
+    Request.cpp
+    Request.h
 
     ObjGlob.cpp
     ObjGlob.h

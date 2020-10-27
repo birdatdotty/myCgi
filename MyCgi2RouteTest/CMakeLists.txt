@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 # for build with debug:
 # cmake -DCMAKE_BUILD_TYPE=Debug .
-
-#project(MyCgi2RouteTest LANGUAGES CXX)
+project(MyCgi2RouteTest)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -13,7 +12,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(PkgConfig REQUIRED)
 find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
+
+configure_file(qmldir.in qmldir)
+
+pkg_check_modules(MYCGI REQUIRED myCgi2)
+#pkg_search_module(MYCGI REQUIRED myCgi)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 IF(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -21,12 +26,13 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions( -DDEBUG )
 ENDIF()
 
-add_library(
-MyCgi2RouteTest SHARED
+add_library(${CMAKE_PROJECT_NAME} SHARED
   mycgi2routetest_plugin.cpp
   mycgi2routetest.cpp
 )
-target_link_libraries(MyCgi2RouteTest fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+target_link_libraries(${CMAKE_PROJECT_NAME} fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
-install(TARGETS MyCgi2RouteTest DESTINATION plugins)
-
+install(TARGETS ${CMAKE_PROJECT_NAME}
+    DESTINATION "${MYCGI_LIBRARY_DIRS}/plugins/${CMAKE_PROJECT_NAME}")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qmldir
+    DESTINATION "${MYCGI_LIBRARY_DIRS}/plugins/${CMAKE_PROJECT_NAME}")

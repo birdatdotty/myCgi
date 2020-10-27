@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
 #project(Router LANGUAGES CXX)
+project(Router
+    VERSION 1.0.1
+    DESCRIPTION "myCgi2Router description"
+    LANGUAGES CXX)
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

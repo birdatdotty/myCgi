@@ -5,7 +5,10 @@ cmake_minimum_required(VERSION 3.14)
 # prefix:
 # cmake -DCMAKE_INSTALL_PREFIX=/usr .
 
-project(myCgi2 LANGUAGES CXX)
+project(myCgi2
+    VERSION 0.3.0
+    DESCRIPTION "myCgi2lib description"
+    LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -28,6 +31,8 @@ set(PROJ_CONF
     "${CMAKE_INSTALL_PREFIX}/etc/${PROJECT_NAME}/root.qml")
 
 configure_file(config.h.in config.h)
+configure_file(myCgi2.pc.in ${CMAKE_PROJECT_NAME}.pc @ONLY)
+configure_file(myCgi2.service.in ${CMAKE_PROJECT_NAME}.service)
 
 #add_library(Obj SHARED
 #    Obj.cpp
@@ -44,7 +49,6 @@ add_executable(${CMAKE_PROJECT_NAME}
   main.cpp
 
   root.qml
-  myCgi2.service
 
   utils.h
 
@@ -58,12 +62,20 @@ add_executable(${CMAKE_PROJECT_NAME}
   INSTALL
   README.md
 )
-target_link_libraries(${CMAKE_PROJECT_NAME} Router #[[Obj ]] fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+target_link_libraries(${CMAKE_PROJECT_NAME} Router fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
-install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
 
 #install(TARGETS Obj                   DESTINATION lib)
 #install(FILES   Obj.h                 DESTINATION include)
 
-install(FILES   root.qml              DESTINATION etc/${CMAKE_PROJECT_NAME})
-install(FILES   myCgi2.service        DESTINATION lib/systemd/system)
+install(TARGETS ${CMAKE_PROJECT_NAME}
+    DESTINATION bin)
+
+install(FILES   root.qml
+    DESTINATION etc/${CMAKE_PROJECT_NAME})
+
+install(FILES   ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.service
+    DESTINATION lib/systemd/system)
+
+install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.pc
+    DESTINATION lib/pkgconfig)

@@ -1,7 +1,7 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include "Obj.h"
+#include "Request.h"
 
 #include <QMap>
 #include <QObject>

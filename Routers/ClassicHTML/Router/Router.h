@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QJSEngine>
 
-#include "Obj.h"
+#include "Request.h"
 
 #include <QMap>
 #include <QFileSystemWatcher>

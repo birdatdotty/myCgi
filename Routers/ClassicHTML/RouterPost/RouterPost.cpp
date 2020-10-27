@@ -7,7 +7,7 @@
 
 
 
-bool RouterPost::route(FCGX_Request &req, QString url, Request *obj)
+bool RouterPost::route(FCGX_Request &req, QString /*url*/, Request */*obj*/)
 {
     #ifdef DEBUG
         qInfo() << "bool RouterPost::route(FCGX_Request &req, QString url, Obj *obj)";

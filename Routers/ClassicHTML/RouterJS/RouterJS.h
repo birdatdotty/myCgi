@@ -2,7 +2,6 @@
 #define ROUTERJS_H
 
 #include "Router.h"
-#include "Obj.h"
 
 class RouterJS : public Router
 {

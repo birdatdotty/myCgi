@@ -3,7 +3,7 @@
 #include <QFile>
 #include <QJSEngine>
 
-#include "Obj.h"
+#include "Request.h"
 #include "ObjGlob.h"
 
 #ifdef DEBUG

@@ -1,0 +1,10 @@
+[Unit]
+Description=test
+
+[Service]
+ExecStart=@CMAKE_INSTALL_PREFIX@/bin/@CMAKE_PROJECT_NAME@
+#Type=dbus
+#BusName=test.service
+
+[Install]
+WantedBy=multi-user.target
