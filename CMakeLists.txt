@@ -31,6 +31,7 @@ set(PROJ_CONF
     "${CMAKE_INSTALL_PREFIX}/etc/${PROJECT_NAME}/root.qml")
 
 configure_file(config.h.in config.h)
+configure_file(root.qml.in root.qml)
 configure_file(myCgi2.pc.in ${CMAKE_PROJECT_NAME}.pc @ONLY)
 configure_file(myCgi2.service.in ${CMAKE_PROJECT_NAME}.service)
 
@@ -72,13 +73,10 @@ add_executable(${CMAKE_PROJECT_NAME}
 target_link_libraries(${CMAKE_PROJECT_NAME} Router fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
 
-#install(TARGETS Obj                   DESTINATION lib)
-#install(FILES   Obj.h                 DESTINATION include)
-
 install(TARGETS ${CMAKE_PROJECT_NAME}
     DESTINATION bin)
 
-install(FILES   root.qml
+install(FILES   ${CMAKE_BINARY_DIR}/root.qml
     DESTINATION etc/${CMAKE_PROJECT_NAME})
 
 install(FILES   ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.service
@@ -86,3 +84,7 @@ install(FILES   ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.service
 
 install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.pc
     DESTINATION lib/pkgconfig)
+
+#chunks  css  html  js  scripts
+install(DIRECTORY web/
+    DESTINATION var/${CMAKE_PROJECT_NAME})

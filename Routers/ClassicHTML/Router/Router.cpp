@@ -2,6 +2,7 @@
 #include "Page.h"
 #include "Chunk.h"
 #include "utils.h"
+#include "FCGIRequest.h"
 
 #include <QFile>
 
@@ -37,6 +38,7 @@ Router::Router(Router *router) {
 void Router::request(FCGX_Request &req)
 {
 //    Obj *obj = new Obj(this);
+    FCGIRequest FCGIReq(req);
     Request *obj = new Request(req, m_globObject);
 
 #ifdef DEBUG
@@ -46,9 +48,11 @@ void Router::request(FCGX_Request &req)
 #endif
     // https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
     // GET, POST, maybe PUT, DELETE, HEAD, CONNECT, OPTIONS, TRACE, PATCH
-    const char *_method = method(req);
+//    const char *_method = method(req);
+    QString _method = FCGIReq.method();
     /// url: /index.dsfsd
-    QString _url = url(req);
+//    QString _url = url(req);
+    QString _url = FCGIReq.url();
 
 #ifdef DEBUG
     qInfo() << "_method:" << _method;

@@ -17,10 +17,6 @@ protected:
 private:
     FCGX_Request request;
     QList<Router *> router;
-
-signals:
-    void sigRequest(FCGX_Request request);
-
 };
 
 #endif // ROUTERLISTEN_H
