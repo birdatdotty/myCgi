@@ -13,7 +13,7 @@ ObjGlob::ObjGlob(Router *router)
       Chunks(router),
       Scripts(router),
       m_router(router),
-      m_count(20)
+      threads(1)
 {
 }
 

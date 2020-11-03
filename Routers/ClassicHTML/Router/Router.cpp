@@ -122,6 +122,15 @@ Page *Router::getPage(const char *url) {
     return page;
 }
 
+#include <QDebug>
+void Router::updateGlobObj(ObjGlob *newGlobObject) {
+    qInfo() << "void Router::updateGlobObj(ObjGlob *newGlobObject)";
+    m_globObject = newGlobObject;
+    int childrensCount = routerCount();
+    for (int i = 0; i < childrensCount; i++)
+        router(i)->updateGlobObj(newGlobObject);
+}
+
 void Router::setRoot(QString newRoot) { root = newRoot; }
 QString Router::getRoot() const { return root; }
 
@@ -156,14 +165,15 @@ bool Router::route(FCGX_Request &req, QString url, Request *obj)
     page = getPage(url.toUtf8());
 
     QJsonObject json = str2json(getData(req));
-    QJsonObject data;
-    data["page"] = uri(req);
-    data["method"] = method(req);
-    data["get"] = getData(req);
-    data["url"] = url;
+//    QJsonObject data;
+//    data["page"] = uri(req);
+//    data["method"] = method(req);
+//    data["get"] = getData(req);
+//    data["url"] = url;
 
-    obj->set(data);
+//    obj->set(data);
     QByteArray pageOut = page->out(getObjGlob(), obj).toUtf8();
+    m_globObject->out(page, obj);
 
     // Завершаем запрос
     // DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);

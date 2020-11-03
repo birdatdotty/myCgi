@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
 #project(Router LANGUAGES CXX)
-project(Router
-    VERSION 1.0.1
-    DESCRIPTION "myCgi2Router description"
-    LANGUAGES CXX)
-
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -33,5 +28,5 @@ add_library(ClassicHTML SHARED
 
 target_link_libraries(ClassicHTML Router RouterJS RouterCSS RouterPost fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
-install(TARGETS ClassicHTML DESTINATION lib/myCgi2/plugins/ClassicHTML)
-install(FILES qmldir DESTINATION lib/myCgi2/plugins/ClassicHTML)
+install(TARGETS ClassicHTML DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)
+install(FILES qmldir DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)

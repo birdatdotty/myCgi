@@ -15,6 +15,7 @@
 #include "QMLTree.h"
 #include "Page.h"
 #include "Chunk.h"
+#include "ObjGlob.h"
 
 class Router : public QMLTree
 {
@@ -44,6 +45,10 @@ public:
     explicit Router(QString root = "", QObject *parent = nullptr);
     explicit Router(Router& parent);
 
+    bool startWith(QString path) {
+        return path.startsWith(m_url);
+    }
+
     void setRoot(QString newRoot);
     QString getRoot() const;
 
@@ -56,9 +61,13 @@ public:
     void setObjGlob(ObjGlob* newObj);
     ObjGlob* getObjGlob() const;
 
+    // update globObj:
+    virtual void updateGlobObj(ObjGlob* newGlobObject);
+
 signals:
     void rootChanged();
     void urlChanged();
+
 
 protected:
     QString root;

@@ -13,6 +13,7 @@ class Router;
 #include "Chunk.h"
 #include "DefaultPage.h"
 #include "Script.h"
+#include "Page.h"
 
 class ObjGlob:
         public QObject,
@@ -38,16 +39,22 @@ class ObjGlob:
                READ getDefaultPage
                WRITE setDefaultPage)
 
+    Q_PROPERTY(int threads
+               READ getThreads
+               WRITE setThreads)
 
 public:
     ObjGlob(Router *router = nullptr);
     QString auth(QString login, QString password);
     bool test(QString id);
     int count();
+    void out(Page* page, Request *obj) const {}
 
     void setRoot(QString newRoot);
     QString getRoot() const;
 
+    int getThreads() const { return threads; }
+    void setThreads(int newThreads) { threads = newThreads; }
 
 private:
     QMap<QString,QString> users;
@@ -55,6 +62,7 @@ private:
     Router *m_router;
     int m_count;
     QString m_root;
+    int threads;
 
 
     QString getRandomString(int randomStringLength = 12) const;

@@ -12,14 +12,37 @@
 class Service : public QQuickItem
 {
     Q_OBJECT
-// ![0]
-    Q_PROPERTY(QString cgi READ cgi WRITE setCgi NOTIFY sigCgi)
-    Q_PROPERTY(QString root READ root WRITE setRoot NOTIFY sigRoot)
-    Q_PROPERTY(QString defaultPage READ getDefaultPage WRITE setDefaultPage NOTIFY sigDefaultPage)
-    Q_PROPERTY(int queue READ queue WRITE setQueue NOTIFY sigQueue)
-    Q_PROPERTY(QQmlListProperty<Router> routes READ routes)
+
+    Q_PROPERTY(QString cgi
+               READ cgi
+               WRITE setCgi
+               NOTIFY sigCgi)
+
+    Q_PROPERTY(QString root
+               READ root
+               WRITE setRoot
+               NOTIFY sigRoot)
+
+    Q_PROPERTY(QString defaultPage
+               READ getDefaultPage
+               WRITE setDefaultPage
+               NOTIFY sigDefaultPage)
+
+    Q_PROPERTY(int queue
+               READ queue
+               WRITE setQueue
+               NOTIFY sigQueue)
+
+    Q_PROPERTY(ObjGlob* objGlob
+               READ getObjGlob
+               WRITE setObjGlob
+               NOTIFY sigObjGlob)
+
+    Q_PROPERTY(QQmlListProperty<Router> routes
+               READ routes)
+
     Q_CLASSINFO("DefaultProperty", "routes")
-// ![0]
+
 public:
     Service(QQuickItem *parent = nullptr);
 
@@ -41,6 +64,9 @@ public:
     void setDefaultPage(QString newDefaultPage);
     QString getDefaultPage();
 
+    void setObjGlob(ObjGlob* newObj);
+    ObjGlob* getObjGlob() const;
+
 
 protected:
     void componentComplete();
@@ -52,12 +78,14 @@ private:
     int m_queue;
     Router* m_mainRouter;
     QList<Router *> m_routes;
+    ObjGlob* m_globObject;
 
 signals:
     void sigDefaultPage();
     void sigCgi();
     void sigRoot();
     void sigQueue();
+    void sigObjGlob();
 };
 
 

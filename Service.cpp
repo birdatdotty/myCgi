@@ -3,6 +3,7 @@
 
 #ifdef DEBUG
     #include <QDebug>
+#include <Router.h>
     #include <iostream>
 #endif
 
@@ -66,6 +67,9 @@ QString Service::getDefaultPage() {
     return m_defaultPage;
 }
 
+void Service::setObjGlob(ObjGlob *newObj) { m_globObject = newObj; }
+ObjGlob *Service::getObjGlob() const { return m_globObject; }
+
 void Service::componentComplete() {
     #ifdef DEBUG
         qInfo() << "Service::componentComplete";
@@ -76,11 +80,13 @@ void Service::componentComplete() {
 //    m_mainRouter = new Router(m_root);
 //    m_mainRouter->setDefaultPage(m_defaultPage);
 //    for (Router *route: m_routes) {
-//        m_mainRouter->addRoute(route->getUrl(), route);
+//        m_mainRouter->appendRouter(route);
 //    }
 
     // создаем и запускаем прослушивание в отдельном потоке:
 //    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_mainRouter);
-    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_routes.at(0));
+    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_routes);
+    Router *first1 = m_routes[0];
+    first1->updateGlobObj(m_globObject);
     routerListen->start();
 }
