@@ -40,8 +40,8 @@ add_library(Router STATIC
     Router.h
     utils.h
 
-    FCGIRequest.cpp
-    FCGIRequest.h
+#    FCGIRequest.cpp
+#    FCGIRequest.h
 
     DefaultPage.cpp
     DefaultPage.h)

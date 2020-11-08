@@ -7,12 +7,9 @@
 // http://cgi.sourceforge.net/docs/fastcgi___cgi/tutorial/fastcgi.html
 // http://chriswu.me/blog/getting-request-uri-and-content-in-c-plus-plus-fcgi/
 
-//#include "Router.h"
-//#include "RouterJS.h"
-#include "RouterListen.h"
-//#include "RouterPost.h"
-//#include "RouterCss.h"
-#include "Service.h"
+#include "Service/Service.h"
+#include "Service/RouterCSS.h"
+#include "Service/RouterJS.h"
 
 
 #include <QCoreApplication>
@@ -50,6 +47,11 @@ int main(int argc, char *argv[])
         exit(1); //Инициализируем библиотеку перед работой.
 
     qmlRegisterType<Service>("Service", 1,0, "Service");
+    qmlRegisterType<Router>("Service", 1,0, "Router");
+    qmlRegisterType<ObjGlob>("Service", 1,0, "ObjGlob");
+
+    qmlRegisterType<RouterCSS>("DefaultRouter", 1,0, "RouterCSS");
+    qmlRegisterType<RouterJS>("DefaultRouter", 1,0, "RouterJS");
 
     QQmlEngine engine;
 //    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");

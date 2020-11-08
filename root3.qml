@@ -1,6 +1,5 @@
 import Service 1.0
-import ClassicHTML 1.0
-
+import DefaultRouter 1.0
 
 Service {
     id: main
@@ -13,30 +12,27 @@ Service {
 
     objGlob: ObjGlob {
         id: obj
-        defaultPage: "/index.html"
-        chunks: main.root + "/chunks"
-        scripts: main.root + "/scripts"
+        chunks: main.root + "/chunks/"
+        scripts: "/home/2.old/scripts"
     }
 
-//    RouterCSS {
-//        root: main.root
-//        url: "/css"
-//    }
-//    RouterJS {
-//        root: main.root;
-//        url: "/js"
-//    }
+    RouterCSS {
+        root: main.root
+        url: "/css"
+    }
+    RouterJS {
+        root: main.root;
+        url: "/js"
+    }
 //    RouterPost {
 //        root: main.root;
 //        url: "/post"
 //    }
 
     Router {
-        objGlob: main.objGlob
-
         root: main.root + "/html";
         url: "/";
-        defaultPage: "/index.html"
+        defaultPage: "/root3.html"
     }
 }
 

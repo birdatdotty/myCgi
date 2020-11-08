@@ -41,22 +41,23 @@ configure_file(myCgi2.service.in ${CMAKE_PROJECT_NAME}.service)
 #    ObjGlob.cpp)
 #target_link_libraries(Obj fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
-add_subdirectory (Routers/ClassicHTML)
+add_subdirectory(Service)
+#include_directories(Service)
 
 set(QML_IMPORT_PATH ${CMAKE_INSTALL_PREFIX}/plugins CACHE STRING "" FORCE)
 
 find_library(FCGI_LIBRARY NAMES fcgi)
 
-include_directories(Routers/ClassicHTML/Router)
+#include_directories(Routers/ClassicHTML/Router)
 
 add_executable(${CMAKE_PROJECT_NAME}
   main.cpp
 
-  Service.cpp
-  Service.h
+#  Service.cpp
+#  Service.h
 
-  RouterListen.cpp
-  RouterListen.h
+#  RouterListen.cpp
+#  RouterListen.h
 
 # other files (need for qtcreator)
   config.h.in
@@ -65,12 +66,13 @@ add_executable(${CMAKE_PROJECT_NAME}
 
   root.qml
   root2.qml
+  root3.qml
   ChangeLog
   INSTALL
   README.md
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} Router fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+target_link_libraries(${CMAKE_PROJECT_NAME} Service fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
 
 install(TARGETS ${CMAKE_PROJECT_NAME}

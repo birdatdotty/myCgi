@@ -10,11 +10,10 @@
     <h1>Добро пожаловать на мой сайт</h1> Obj.page('url')
     <h2>извиняюсь за столь безобразное оформление, я занимался разработкой сервером, который отдает данную страницу</h2>
     <div id="menu">
-      <!-- Obj.script("/home/1/menu.qj") -->
-      Obj.script(GlobObj, "/menu.qj")
+      Obj.script("/menu.qj")
     </div>
     <main>
-      Obj.chunk(GlobObj, "/html/index.chunk")
+      Obj.chunk("/html/index.chunk")
     </main>
     <script>
       function send(f) {
@@ -35,7 +34,6 @@
         f.reset();
         f.outerHTML
       }
-console.log(Obj.globCount())
     </script>
   </body>
 </html>
