@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.14)
 # cmake -DCMAKE_INSTALL_PREFIX=/usr .
 
 project(myCgi2
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "myCgi2lib description"
     LANGUAGES CXX)
 
