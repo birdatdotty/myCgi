@@ -34,22 +34,13 @@ Scripts::Scripts(QObject *parent)
 {
 }
 
-QString Scripts::script(Request *obj, QString url)
+QString Scripts::script(QJSEngine *engine, QString url)
 {
     QString ret;
     QFile qj(url);
 
     if (qj.open(QIODevice::ReadOnly)) {
         QString script = qj.readAll();
-        QJSEngine *engine = new QJSEngine;
-
-//        Request *self = new Request(obj);
-//        QJSValue jsObj = engine.newQObject(self);
-
-        QJSValue jsObj = engine->newQObject(obj);
-
-        engine->globalObject().setProperty("Obj", jsObj);
-
         ret = engine->evaluate(script).toString();
 
         qj.close();
@@ -57,26 +48,3 @@ QString Scripts::script(Request *obj, QString url)
 
     return ret;
 }
-
-//void Scripts::chunkChanged(const QString &path)
-//{
-//    if (!path.startsWith(m_chunksDir))
-//        return;
-
-//    QString key = path;
-//    key = key.remove(0, m_chunksDir.size());
-
-//#ifdef DEBUG
-//    std::cout << "request: " << std::endl;
-//    qInfo() << "path: [" + path + "]";
-//    qInfo() << "key: [" + key + "]";
-//#endif
-
-//    if (m_chunksDir.contains(key)) {
-//        m_chunksDir.remove(key);
-//        m_chunkWatcher->removePath(path);
-//#ifdef DEBUG
-//        qInfo() << path + " removed";
-//#endif
-//    }
-//}

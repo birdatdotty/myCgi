@@ -42,6 +42,8 @@ void Service::setQueue(int newQueue) {
 
 QQmlListProperty<Router> Service::routes()
 {
+    // if you use qt >= 5.15 then need fix
+    //   return QQmlListProperty<Router>(this, &m_routes);
     return QQmlListProperty<Router>(this, m_routes);
 }
 
@@ -79,7 +81,9 @@ ObjGlob *Service::getObjGlob() const
 
 void Service::request(FCGIRequest &req, Page *page)
 {
-    QByteArray pageOut = page->out(m_globObject, req).toUtf8();
+    QByteArray pageOut = page->contentType().toUtf8();
+    pageOut += "\n\n";
+    pageOut += page->out(m_globObject, req).toUtf8();
     req.send(pageOut);
 }
 
@@ -90,19 +94,22 @@ void Service::componentComplete() {
     qInfo() << "open FCGI on " << m_host;
 #endif
 
-//    m_mainRouter = new Router(m_root);
-//    m_mainRouter->setDefaultPage(m_defaultPage);
-//    for (Router *route: m_routes) {
-//        m_mainRouter->appendRouter(route);
-//    }
+
+
 
     // создаем и запускаем прослушивание в отдельном потоке:
-//    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_mainRouter);
-    RouterListen *routerListen = new RouterListen(cgi(), queue(), m_routes);
-//    Router *first1 = m_routes[0];
-//    first1->updateGlobObj(m_globObject);
+    socketId = FCGX_OpenSocket(cgi().toUtf8(), queue());
+    QList<RouterListen*> routerListens;
+    threads = 1;
+    for (int i = 0; i < threads; i++) {
+        RouterListen* req = new RouterListen(mutex, socketId, m_routes, m_globObject);
+        routerListens << req;
+    }
+
     for (Router* r: m_routes)
         r->updateService(this);
 
-    routerListen->start();
+    qInfo() << __LINE__ << threads;
+    for (RouterListen *routerListen: routerListens)
+        routerListen->start();
 }

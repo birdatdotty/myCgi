@@ -33,7 +33,7 @@ Service {
     }
 
     Router {
-        objGlob: main.objGlob
+        //objGlob: main.objGlob
 
         root: main.root + "/html";
         url: "/";

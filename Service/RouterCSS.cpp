@@ -20,43 +20,12 @@ RouterCSS::RouterCSS(QString root)
       cssWatcher(new QFileSystemWatcher)
 {}
 
-bool RouterCSS::route(FCGX_Request &req, QString url, Request */*obj*/)
-{
-#ifdef DEBUG
-    qInfo() << "bool RouterCSS::route(FCGX_Request &req, QString url, Request *obj)";
-#endif
-    read(root + url);
-
-    QByteArray pageOut = "Content-type: text/css\n\n";
-    pageOut += out(root + url);
-//    pageOut += obj->chunk("/style.css");
-
-    // Завершаем запрос
-    // DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);
-    // DLLAPI int FCGX_FPrintF(FCGX_Stream *stream, const char *format, ...);
-    // ...
-
-    FCGX_PutStr(pageOut, pageOut.size(), req.out);
-    FCGX_Finish_r(&req);
-
-    return true;
-}
-
-bool RouterCSS::route(FCGIRequest &req, QString url, Request *obj)
+bool RouterCSS::route(FCGIRequest &req, QString url, Request */*obj*/)
 {
     read(root + url);
 
-    QByteArray pageOut = "Content-type: text/css\n\n";
-    pageOut += out(root + url);
-//    pageOut += obj->chunk("/style.css");
-
-    // Завершаем запрос
-    // DLLAPI int FCGX_PutStr(const char *str, int n, FCGX_Stream *stream);
-    // DLLAPI int FCGX_FPrintF(FCGX_Stream *stream, const char *format, ...);
-    // ...
-
-    FCGX_PutStr(pageOut, pageOut.size(), req.out());
-//    FCGX_Finish_r(&req);
+    Page* cssPage = new Page(Page::CSS, out(root + url));
+    req.send(cssPage);
 
     return true;
 }

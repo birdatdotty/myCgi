@@ -6,13 +6,18 @@
 #include <QByteArray>
 #endif
 
+#include "Page.h"
 
 FCGIRequest::FCGIRequest()
-{}
+{
+    engine = new QJSEngine;
+}
 
-FCGIRequest::FCGIRequest(FCGX_Request &request)
-    : request(request)
-{}
+//FCGIRequest::FCGIRequest(FCGX_Request request)
+//    : request(request)
+//{
+//    engine = new QJSEngine;
+//}
 
 QString FCGIRequest::url() const
 {
@@ -26,7 +31,7 @@ QString FCGIRequest::method() const {
     return FCGX_GetParam("REQUEST_METHOD", request.envp);
 }
 
-QString FCGIRequest::uri() const {
+QString FCGIRequest::   uri() const {
     /// uri: /index.dsfsd&dsdsf=22
     const char* _uri = FCGX_GetParam("REQUEST_URI", request.envp);
 #ifdef DEBUG
@@ -93,12 +98,32 @@ void FCGIRequest::finish() {
     FCGX_Finish_r(&request);
 }
 
-void FCGIRequest::send(QByteArray &byteArray) {
-    FCGX_PutStr(byteArray, byteArray.size(), request.out);
+FCGX_Stream *FCGIRequest::out(){
+    return request.out;
 }
 
-//void FCGIRequest::setPostData(FCGX_Request &req, Request *obj) {
-//    int _contentLength;
-//    if ((_contentLength = contentLength(req)) > 0)
-//        obj->setPostData(req, _contentLength);
-//}
+#include <QTest>
+void FCGIRequest::send(QByteArray &byteArray) {
+    FCGX_PutStr(byteArray, byteArray.size(), request.out);
+    FCGX_Finish_r(&request);
+
+//    QTest::qWait(6000);
+}
+
+void FCGIRequest::send(Page *page)
+{
+    QByteArray byteArray;
+    byteArray += page->contentType();
+    byteArray += "\n\n";
+    byteArray += page->out(engine);
+
+    FCGX_PutStr(byteArray, byteArray.size(), request.out);
+    FCGX_Finish_r(&request);
+
+    qInfo() << __FILE__ << __LINE__ << "engine:" << engine << engine->evaluate("Obj.t()").toString();
+}
+
+void FCGIRequest::setEngine(QJSEngine *newEngine) {
+    engine = newEngine;
+    qInfo() << __FILE__ << __LINE__ << "engine:" << engine << engine->evaluate("Obj.t()").toString();
+}

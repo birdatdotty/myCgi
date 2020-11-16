@@ -25,7 +25,7 @@ public:
 public:
     void setScriptsDir(QString newDir) { m_scriptsDir = newDir; }
     QString getScriptsDir() const { return m_scriptsDir; }
-    QString script(Request *obj, QString url);
+    QString script(QJSEngine *engine, QString url);
 
 private:
     QFileSystemWatcher* m_scriptWatcher;
@@ -33,8 +33,6 @@ private:
     QString m_scriptsDir;
 
     void scriptChanged(const QString& path);
-
-
 };
 
 #endif // SCRIPT_H

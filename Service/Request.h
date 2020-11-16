@@ -1,6 +1,8 @@
 #ifndef OBJ_H
 #define OBJ_H
 
+#include "FCGIRequest.h"
+
 #include <QObject>
 #include <QJsonObject>
 #include <fcgiapp.h>
@@ -16,10 +18,7 @@ class Request : public QObject
 {
     Q_OBJECT
 public:
-//    explicit Obj(Router *parent = nullptr);
-    explicit Request(FCGX_Request &req, ObjGlob* glob): req(req), glob(glob) {}
-//    explicit Request(Request &obj): req(obj.req), glob(obj.glob) {}
-//    explicit Request(Request *obj): req(obj->req), glob(obj->glob) {}
+    explicit Request(FCGIRequest &req, ObjGlob* glob): req(req), glob(glob) {}
 
     void set(QJsonObject &newObj);
     void setPostUrlencoded(QString strPostData);
@@ -30,12 +29,11 @@ public:
 
     void update(Request *newObj);
     QJsonObject& getObj() {return obj;}
-    QString url() {
-        return FCGX_GetParam("DOCUMENT_URI", req.envp);
-    }
 
 
     // QJSEngine:
+    Q_INVOKABLE QString url();
+    Q_INVOKABLE QString uri();
     Q_INVOKABLE QString body();
     Q_INVOKABLE QString val(QString key);
     Q_INVOKABLE QString page(QString key); /// return value from FCGX_Request
@@ -47,9 +45,15 @@ public:
 
     Q_INVOKABLE bool testPath(QString key, QString value);
 
+    Q_INVOKABLE QString t() {return "Q_INVOKABLE QString t()";}
+
+    void setRequest(FCGX_Request *newRequest) {
+        req.setRequest(newRequest);
+//        FCGX_Request request;
+    }
 
     QJsonObject obj;
-    FCGX_Request req;
+    FCGIRequest &req;
 private:
     QJsonObject postData;
 

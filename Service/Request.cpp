@@ -11,17 +11,9 @@
 #include <QFile>
 #include <QJSEngine>
 #include <QJsonDocument>
+#include <QString>
 
 
-
-//Request::Obj(Router *parent)
-//    : QObject(nullptr)
-//{
-////    static ObjGlob* _glob = new ObjGlob(parent);
-//    static ObjGlob* _glob = parent->getObjGlob();
-
-//    glob = _glob;
-//}
 
 void Request::set(QJsonObject &newObj) {
     obj = newObj;
@@ -136,6 +128,14 @@ void Request::update(Request *newObj) {
     obj = newObj->obj;
 }
 
+QString Request::url() {
+    return req.url();
+}
+
+QString Request::uri() {
+    return req.uri();
+}
+
 QString Request::body() {
     if (obj["page"] == "/pass.unix")
         return "<h1>Page: /pass.unix</h1>";
@@ -154,28 +154,6 @@ QString Request::page(QString key)
 {
     return obj[key].toString("").toHtmlEscaped();
 }
-
-//QString Request::script(QString file)
-//{
-//    QString ret;
-//    QFile qj(file);
-
-//    if (qj.open(QIODevice::ReadOnly)) {
-//        QString script = qj.readAll();
-//        QJSEngine engine;
-
-//        Obj self;
-//        self.obj = obj;
-//        QJSValue jsObj = engine.newQObject(&self);
-//        engine.globalObject().setProperty("Obj", jsObj);
-
-//        ret = engine.evaluate(script).toString();
-
-//        qj.close();
-//    }
-
-//    return ret;
-//}
 
 QString Request::file(QString file)
 {
@@ -203,22 +181,16 @@ QString Request::chunk(QString chunkPath) {
 
 QString Request::script(QString scriptPath)
 {
+#ifdef DEBUG
     qInfo() << "QString Request::script(" << glob->getScriptsDir() + scriptPath << ")";
-    QString s = glob->script(this, glob->getScriptsDir() + scriptPath);
-    return s;
+#endif
+
+//    QString s = glob->script(req.engine, glob->getScriptsDir() + scriptPath);
+//    return s;
+    return glob->script(req.engine, glob->getScriptsDir() + scriptPath);
 }
 
 bool Request::testPath(QString key, QString value) {
-#ifdef DEBUG
-    qInfo() << "bool Request::testPath(QString key, QString value)";
-    qInfo() << "key:" << key;
-    qInfo() << "obj:" << obj;
-    qInfo() << __LINE__ << glob->getDefaultPage();
-    qInfo() << __LINE__ << url();
-    qInfo() << "value:" << value;
-    qInfo() << "bool Request::testPath(QString key, QString value)";
-#endif
-
     QString _url = url();
     if ( _url == "/" )
         _url = glob->getDefaultPage();

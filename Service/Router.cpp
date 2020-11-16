@@ -39,7 +39,7 @@ void Router::request(FCGIRequest &req)
 {
 //    Obj *obj = new Obj(this);
 //    FCGIRequest FCGIReq(req);
-    Request *obj = new Request(req.request, m_globObject);
+    Request *obj = new Request(req, m_globObject);
 
 #ifdef DEBUG
     std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
@@ -132,18 +132,19 @@ bool Router::route(FCGIRequest &req, QString url, Request *obj)
     for(Router* router: _routes)
         qInfo() << router << router->getUrl();
 #endif
-    for(Router* it: _routes)
-        if (url.startsWith(it->getUrl()))
-            return it->route(req, url, obj);
+//    for(Router* it: _routes)
+//        if (url.startsWith(it->getUrl()))
+//            return it->route(req, url, obj);
 
-    setPostData(FCGIReq, obj);
+//    setPostData(FCGIReq, obj);
     Page *page;
-    if (url == "/")
-        url = m_defaultPage;
+//    if (url == "/")
+//        url = m_defaultPage;
 
     page = getPage(url.toUtf8());
 
-    service->request(req, page);
+//    service->request(req, page);
+    req.send(page);
 
     return true;
 

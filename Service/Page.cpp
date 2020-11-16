@@ -16,11 +16,12 @@ Page::Page(QStringList list, QObject *parent)
     : QObject(parent),
       list(list),
       m_exist(true),
-      engine(new QJSEngine)
+      type(HTML)
 {}
 
 Page::Page(QString prefix, QString url, QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      type(HTML)
 {
     QString str;
     QFile f(prefix + url);
@@ -50,13 +51,27 @@ Page::Page(QString prefix, QString url, QObject *parent)
     list << str.mid(s);
 }
 
+Page::Page(TYPE type, QByteArray &byteArray, QObject *parent)
+    : QObject(parent),
+      type(type)
+{
+    list << byteArray;
+}
+
+Page::Page(Page::TYPE type, QString byteArray, QObject *parent)
+    : QObject(parent),
+      type(type)
+{
+    list << byteArray;
+}
+
 QString Page::out(ObjGlob *glob, FCGIRequest& req) const
 {
 #ifdef DEBUG
     qInfo() << glob->chunk("/chunk1.chunk");
 #endif
     QJSEngine engine;
-    Request request(req.request, glob);
+    Request request(req, glob);
     QJSValue jsObj = engine.newQObject(&request);
     QJSValue jsObjGlob = engine.newQObject(glob);
 
@@ -69,7 +84,7 @@ QString Page::out(ObjGlob *glob, FCGIRequest& req) const
 #endif
 
 
-    QString ret = "Content-type: text/html\n\n";
+    QString ret;
     for (int i = 0; i < list.size(); i++) {
         if ((i & 1) == 0)
             ret += list.at(i);
@@ -81,6 +96,38 @@ QString Page::out(ObjGlob *glob, FCGIRequest& req) const
     return ret;
 }
 
+QString Page::out(QJSEngine *engine) const {
+#ifdef DEBUG
+    qInfo() << "   >> " << engine->evaluate("1+33").toString();
+    qInfo() << "   >> " << engine->evaluate("Obj.t()").toString();
+#endif
+
+    QString ret;
+    for (int i = 0; i < list.size(); i++) {
+        if ((i & 1) == 0)
+            ret += list.at(i);
+        else {
+            ret += engine->evaluate(list.at(i)).toString();
+        }
+    }
+
+    return ret;
+}
+
 bool Page::exist() {
     return m_exist;
+}
+
+QString Page::contentType() {
+//    HTML,JS,CSS,JSON
+    if (type == HTML)
+        return "Content-type: text/html";
+    if (type == CSS)
+        return "Content-type: text/css";
+    if (type == JS)
+        return "Content-type: application/javascript";
+    if (type == JSON)
+        return "application/json";
+
+    return "";
 }

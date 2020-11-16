@@ -1,6 +1,7 @@
 #ifndef SERVICE1_H
 #define SERVICE1_H
 
+#include <QMutex>
 #include <QObject>
 #include <QQuickItem>
 
@@ -10,6 +11,9 @@
 #include <QDebug>
 
 #include "FCGIRequest.h"
+#include "RouterListen.h"
+
+class QJSEngine;
 
 class Service : public QQuickItem
 {
@@ -88,7 +92,10 @@ private:
     Router* m_mainRouter;
     QList<Router *> m_routes;
     ObjGlob* m_globObject;
+
+    int socketId;
     int threads;
+    QMutex mutex;
 
 signals:
     void sigDefaultPage();

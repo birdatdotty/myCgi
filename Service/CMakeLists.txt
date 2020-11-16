@@ -48,7 +48,7 @@ add_library(Service STATIC
     RouterCSS.h
     RouterJS.h)
 
-target_link_libraries(Service fcgi Qt5::Core Qt5::Qml Qt5::Quick)
+target_link_libraries(Service fcgi Qt5::Core Qt5::Qml Qt5::Quick Qt5::Test)
 
 #install(TARGETS ClassicHTML DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)
 #install(FILES qmldir DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)

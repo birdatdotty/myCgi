@@ -1,22 +1,47 @@
 #ifndef ROUTERLISTEN_H
 #define ROUTERLISTEN_H
 
+#include <QMutex>
 #include <QThread>
 #include <fcgi_stdio.h>
 #include "Router.h"
+
+
+class FCGIRequest;
+//#include "FCGIRequest.h"
+
 
 class RouterListen : public QThread
 {
     Q_OBJECT
 public:
-    explicit RouterListen(QString path, int listenQueueBacklog, QList<Router *> router, QObject *parent = nullptr);
+//    RouterListen(QMutex &mutex, int socketId, QString str)
+    explicit RouterListen(QMutex &mutex, int socketId, QList<Router *> router, ObjGlob* objGlob, QObject *parent = nullptr);
+
+    FCGIRequest *FCGIReq;
+    void setEngine(QJSEngine* newEngine) {
+        engine = newEngine;
+        FCGIReq->setEngine(newEngine);
+    }
+
 
 protected:
     void run() override;
 
 private:
-    FCGX_Request request;
+    QMutex &mutex;
+    QString path;
+    int listenQueueBacklog;
+    int socketId;
     QList<Router *> router;
+    ObjGlob* objGlob;
+//    FCGIRequest *request;
+    FCGX_Request fcgx_request;
+    QJSEngine* engine;
+    Request *request;
+
+
+    int rc;
 };
 
 #endif // ROUTERLISTEN_H

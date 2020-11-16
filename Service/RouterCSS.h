@@ -8,13 +8,11 @@
 class RouterCSS : public Router
 {
 public:
-//    RouterCSS(Router* parent = nullptr): Router(parent), cssWatcher(new QFileSystemWatcher) {/*root=parent->root;*/}
     RouterCSS(Router* parent);
     RouterCSS(QString root = "");
 
 
 protected:
-            bool route(FCGX_Request &req,QString url, Request *obj);
     virtual bool route(FCGIRequest &req, QString url, Request *obj);
 
 private:

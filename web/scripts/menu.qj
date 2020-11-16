@@ -55,3 +55,4 @@ function buildFromJson(block) {
 let str = "<ul>" + buildFromJson(menuSrc) + "</ul>"
 //console.log(str)
 str
+
