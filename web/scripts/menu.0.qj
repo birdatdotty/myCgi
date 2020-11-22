@@ -24,36 +24,33 @@ var menuSrc = [
 function li(name) {
   return "<li><a>" + name + "</a></li>";
 }
-
 function buildFromJson(block) {
   var ret = "";
-  var url = Obj.url();
   for (var i = 0; i < block.length; i++) {
     if (block[i]["sub"].length === 0) {
       if (block[i]["href"] === undefined) {
-        if (Obj.testPath(url, block[i]["href"]))
+        if (Obj.testPath("url", block[i]["href"]))
           ret += "<li class='active'><a>" + block[i]["name"] + "<a></li>";
-          ret += "<li><a>" + block[i]["name"] + "<a></li>";
+          ret += "<li class='notActive'><a>" + block[i]["name"] + "<a></li>";
         else
       }
       else {
-        if ( Obj.testPath(url, block[i]["href"]) )
+        if ( Obj.testPath("url", block[i]["href"]) )
           ret += "<li class='active'><a href='" +  block[i]["href"] + "'>" + block[i]["name"] + "</a></li>";
         else
           ret += "<li><a href='" +  block[i]["href"] + "'>" + block[i]["name"] + "</a></li>";
       }
     } else {
-      if (Obj.testPath(url, block[i]["href"]))
+      if (Obj.testPath("url", block[i]["href"]))
         ret += "<li class='active'><a>" + block[i]["name"] + "</a><ul>";
       else
-        ret += "<li><a>" + block[i]["name"] + "</a><ul>";
+        ret += "<li class='notActive'><a>" + block[i]["name"] + "</a><ul>";
       ret += buildFromJson(block[i]["sub"]);
       ret += "</ul></li>";
     }
   }
   return ret;
 }
-
 
 let str = "<ul>" + buildFromJson(menuSrc) + "</ul>"
 //"<ul>" + buildFromJson(menuSrc) + "</ul>"

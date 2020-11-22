@@ -29,6 +29,7 @@ Page::Page(QString prefix, QString url, QObject *parent)
     if (!f.open(QIODevice::ReadOnly)) {
         list << "<h1>Page not found!</h1>";
         m_exist = false;
+
         return;
     }
 
@@ -68,7 +69,7 @@ Page::Page(Page::TYPE type, QString byteArray, QObject *parent)
 QString Page::out(ObjGlob *glob, FCGIRequest& req) const
 {
 #ifdef DEBUG
-    qInfo() << glob->chunk("/chunk1.chunk");
+    qInfo() << "\n    QString Page::out(ObjGlob *glob, FCGIRequest& req) const";
 #endif
     QJSEngine engine;
     Request request(req, glob);
@@ -96,22 +97,17 @@ QString Page::out(ObjGlob *glob, FCGIRequest& req) const
     return ret;
 }
 
-QString Page::out(QJSEngine *engine) const {
-#ifdef DEBUG
-    qInfo() << "   >> " << engine->evaluate("1+33").toString();
-    qInfo() << "   >> " << engine->evaluate("Obj.t()").toString();
-#endif
-
+QStringList Page::out(QJSEngine *engine) const {
     QString ret;
     for (int i = 0; i < list.size(); i++) {
-        if ((i & 1) == 0)
+//        if ((i & 1) == 0)
             ret += list.at(i);
-        else {
-            ret += engine->evaluate(list.at(i)).toString();
-        }
+//        else {
+//            ret += engine->evaluate(list.at(i)).toString();
+//        }
     }
-
-    return ret;
+    return list;
+//    return ret;
 }
 
 bool Page::exist() {
@@ -119,13 +115,16 @@ bool Page::exist() {
 }
 
 QString Page::contentType() {
-//    HTML,JS,CSS,JSON
+//    HTML, JS, CSS, JSON
     if (type == HTML)
         return "Content-type: text/html";
+
     if (type == CSS)
         return "Content-type: text/css";
+
     if (type == JS)
         return "Content-type: application/javascript";
+
     if (type == JSON)
         return "application/json";
 

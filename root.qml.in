@@ -1,5 +1,5 @@
 import Service 1.0
-import ClassicHTML 1.0
+import DefaultRouter 1.0
 
 
 Service {
@@ -9,14 +9,12 @@ Service {
     queue: 400
     // Задаем socket
     cgi: ":9000"
+    threads: 8
 
     objGlob: ObjGlob {
       id: obj
-        threads: 8
-        defaultPage: "/index.html"
         chunks: main.root + "/chunks"
         scripts: main.root + "/scripts"
-//        posts: main.root + "/posts"
     }
 
     RouterCSS {
@@ -27,11 +25,12 @@ Service {
         root: main.root;
         url: "/js"
     }
+/*
     RouterPost {
         root: main.root;
         url: "/post"
     }
-
+*/
     Router {
         objGlob: main.objGlob
 

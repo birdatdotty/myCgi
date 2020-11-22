@@ -7,6 +7,7 @@
 #endif
 
 #include "Page.h"
+#include "Router.h"
 
 FCGIRequest::FCGIRequest()
 {
@@ -19,7 +20,16 @@ FCGIRequest::FCGIRequest()
 //    engine = new QJSEngine;
 //}
 
-QString FCGIRequest::url() const
+QString FCGIRequest::url(const Router *router) const
+{
+    QString ret = FCGX_GetParam("DOCUMENT_URI", request.envp);
+    if (ret.endsWith('/'))
+        return ret + router->getDefaultPage();
+
+    return ret;
+}
+
+QString FCGIRequest::clearUrl() const
 {
     return FCGX_GetParam("DOCUMENT_URI", request.envp);
 }
@@ -110,20 +120,6 @@ void FCGIRequest::send(QByteArray &byteArray) {
 //    QTest::qWait(6000);
 }
 
-void FCGIRequest::send(Page *page)
-{
-    QByteArray byteArray;
-    byteArray += page->contentType();
-    byteArray += "\n\n";
-    byteArray += page->out(engine);
-
-    FCGX_PutStr(byteArray, byteArray.size(), request.out);
-    FCGX_Finish_r(&request);
-
-    qInfo() << __FILE__ << __LINE__ << "engine:" << engine << engine->evaluate("Obj.t()").toString();
-}
-
 void FCGIRequest::setEngine(QJSEngine *newEngine) {
     engine = newEngine;
-    qInfo() << __FILE__ << __LINE__ << "engine:" << engine << engine->evaluate("Obj.t()").toString();
 }

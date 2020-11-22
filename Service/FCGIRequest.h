@@ -2,6 +2,7 @@
 #define FCGIREQUEST_H
 
 class Page;
+class Router;
 
 #include <fcgi_stdio.h>
 #include <QObject>
@@ -15,7 +16,8 @@ public:
     FCGIRequest();
 //    FCGIRequest(FCGX_Request request);
 
-    QString url() const;
+    QString url(const Router *router) const;
+    QString clearUrl() const;
     QString method() const;
 
     QString uri() const;
@@ -29,7 +31,6 @@ public:
     void finish();
     FCGX_Stream *out();
     void send(QByteArray &byteArray);
-    void send(Page* page);
 
     void setRequest(FCGX_Request *newRequest) {
         request = *newRequest;

@@ -31,6 +31,7 @@ public:
     QJsonObject& getObj() {return obj;}
 
 
+    QString url(const Router *router);
     // QJSEngine:
     Q_INVOKABLE QString url();
     Q_INVOKABLE QString uri();

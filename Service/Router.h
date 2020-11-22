@@ -58,12 +58,13 @@ public:
     QString getUrl() const;
 
     void setDefaultPage(QString newDefaultPage);
-    QString getDefaultPage();
+    QString getDefaultPage() const;
 
     void setObjGlob(ObjGlob* newObj);
     ObjGlob* getObjGlob() const;
 
     virtual void updateService(Service* newService);
+
 signals:
     void rootChanged();
     void urlChanged();
@@ -82,21 +83,14 @@ protected:
     Page* getPage(const char *url);
 
     // select route
-    // parse request:
-    const char *method(FCGX_Request &req);
-    const char *uri(FCGX_Request &req);
-    const char *url(FCGX_Request &req);
-    const char *getData(FCGX_Request &req);
-    const char *contentType(FCGX_Request &req);
-    int contentLength(FCGX_Request &req);
-    void setPostData(FCGIRequest *req, Request *obj);
 
     // routes:
-    virtual bool route(FCGIRequest &req, QString url, Request *obj);
+public:
+    virtual Page* route(FCGIRequest &req, QString url);
 
 public slots:
     void pageChanged(const QString& path);
-    void request(FCGIRequest &req);
+    Page *request(FCGIRequest &req);
 
 private:
     Router* select(QString url, QString method);

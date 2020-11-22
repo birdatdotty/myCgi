@@ -8,7 +8,7 @@ Service {
     queue: 400
     // Задаем socket
     cgi: ":9000"
-    threads: 8
+    threads: 16
 
     objGlob: ObjGlob {
         id: obj
@@ -32,16 +32,13 @@ Service {
     Router {
         root: main.root + "/html";
         url: "/";
-        defaultPage: "/root3.html"
+        defaultPage: "index.html"
     }
 }
 
 /*
 post:
-QJSEngine engine;
-engine.eval(Script.qj)
+page = new Page(Page.HTML, "Hello, world!")
 
-Script.qj:
-ret.type = "text/css"
-ret.body = "* {color: red}"
+page.out()
 */

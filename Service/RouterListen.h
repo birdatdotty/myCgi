@@ -23,6 +23,7 @@ public:
         engine = newEngine;
         FCGIReq->setEngine(newEngine);
     }
+    void initEngine();
 
 
 protected:

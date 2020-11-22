@@ -20,7 +20,7 @@ public:
     explicit Page(TYPE type, QByteArray &byteArray, QObject *parent = nullptr);
     explicit Page(TYPE type, QString byteArray, QObject *parent = nullptr);
     virtual QString out(ObjGlob *glob, FCGIRequest &req) const;
-    virtual QString out(QJSEngine *engine) const;
+    virtual QStringList out(QJSEngine *engine) const;
     bool exist();
     QString contentType();
 

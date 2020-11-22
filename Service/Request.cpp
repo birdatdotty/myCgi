@@ -128,8 +128,13 @@ void Request::update(Request *newObj) {
     obj = newObj->obj;
 }
 
-QString Request::url() {
-    return req.url();
+QString Request::url(const Router* router) {
+    return req.url(router);
+}
+
+QString Request::url()
+{
+    return req.clearUrl();
 }
 
 QString Request::uri() {
@@ -182,16 +187,19 @@ QString Request::chunk(QString chunkPath) {
 QString Request::script(QString scriptPath)
 {
 #ifdef DEBUG
-    qInfo() << "QString Request::script(" << glob->getScriptsDir() + scriptPath << ")";
+    qInfo() << "\n    QString Request::script(" << glob->getScriptsDir() + scriptPath << ")";
 #endif
 
-//    QString s = glob->script(req.engine, glob->getScriptsDir() + scriptPath);
-//    return s;
-    return glob->script(req.engine, glob->getScriptsDir() + scriptPath);
+    QString s = glob->script(req.engine, glob->getScriptsDir() + scriptPath);
+    return s;
 }
 
 bool Request::testPath(QString key, QString value) {
-    QString _url = url();
+#ifdef DEBUG
+    qInfo() << "    bool Request::testPath(" << key << "," << value << ")";
+#endif
+
+    QString _url = key;
     if ( _url == "/" )
         _url = glob->getDefaultPage();
 

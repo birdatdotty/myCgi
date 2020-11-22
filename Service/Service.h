@@ -29,11 +29,6 @@ class Service : public QQuickItem
                WRITE setRoot
                NOTIFY sigRoot)
 
-    Q_PROPERTY(QString defaultPage
-               READ getDefaultPage
-               WRITE setDefaultPage
-               NOTIFY sigDefaultPage)
-
     Q_PROPERTY(int queue
                READ queue
                WRITE setQueue
@@ -70,16 +65,11 @@ public:
 
     Router* mainRouter();
 
-    void setDefaultPage(QString newDefaultPage);
-    QString getDefaultPage();
-
     void setObjGlob(ObjGlob* newObj);
     ObjGlob* getObjGlob() const;
 
     int getThreads() const { return threads; }
     void setThreads(int newThreads) { threads = newThreads; }
-
-    void request(FCGIRequest &req, Page* page);
 
 protected:
     void componentComplete();

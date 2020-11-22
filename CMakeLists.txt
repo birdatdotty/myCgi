@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.11)
 # for build with debug:
 # cmake -DCMAKE_BUILD_TYPE=Debug .
 #
@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.14)
 # cmake -DCMAKE_INSTALL_PREFIX=/usr .
 
 project(myCgi2
-    VERSION 0.4.0
+    VERSION 0.5.1
     DESCRIPTION "myCgi2lib description"
     LANGUAGES CXX)
 

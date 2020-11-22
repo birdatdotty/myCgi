@@ -9,8 +9,7 @@ public:
     RouterJS(Router* parent);
     RouterJS(QString root = "");
 
-protected:
-    virtual bool route(FCGIRequest &req, QString url, Request *obj);
+    virtual Page* route(FCGIRequest &req, QString url);
 };
 
 #endif // ROUTERJS_H

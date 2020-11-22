@@ -21,56 +21,50 @@ Router::Router(QString root, QObject *parent)
             this, &Router::pageChanged);
 }
 
-Router::Router(Router &parent) {
-    #ifdef DEBUG
-        qInfo() << "Router::Router(Router &parent)";
-    #endif
-    root = parent.root;
-}
-
-Router::Router(Router *router) {
-#ifdef DEBUG
-    qInfo() << "Router::Router(Router *router)";
-#endif
-    root = router->root;
-}
-
-void Router::request(FCGIRequest &req)
+Router::Router(Router &parent)
+    : root(parent.root)
 {
-//    Obj *obj = new Obj(this);
-//    FCGIRequest FCGIReq(req);
-    Request *obj = new Request(req, m_globObject);
+#ifdef DEBUG
+    qInfo() << "\n    Router::Router(Router &parent)";
+#endif
+}
+
+Router::Router(Router *router)
+    : root(router->root)
+{
+}
+
+Page* Router::request(FCGIRequest &req)
+{
+//    Request *obj = new Request(req, m_globObject);
 
 #ifdef DEBUG
-    std::cout << "\n" << QDateTime::currentDateTime().time().toString().toStdString() << "\n-------\n";
-//    qInfo() << "Obj.url():" << obj->url();
+    qInfo() << "\n    " << QDateTime::currentDateTime().time().toString() << "\n-------";
     qInfo() << "request:";
 #endif
-    // https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
-    // GET, POST, maybe PUT, DELETE, HEAD, CONNECT, OPTIONS, TRACE, PATCH
-//    const char *_method = method(req);
+
     QString _method = req.method();
-    /// url: /index.dsfsd
-//    QString _url = url(req);
-    QString _url = req.url();
+    QString _url = req.url(this);
 
 #ifdef DEBUG
     qInfo() << "_method:" << _method;
     qInfo() << "_url:" << _url;
 #endif
 
-    select(_url, _method)->route(req, _url, obj);
+    return select(_url, _method)->route(req, _url);
 }
 
 Router *Router::select(QString url, QString method)
 {
+#ifdef DEBUG
+    qInfo() << "\n    Router *Router::select(QString url, QString method)";
+#endif
     for (Router *route: _routes) {
         if (url.startsWith(route->getUrl())) {
 #ifdef DEBUG
-    qInfo() << __LINE__ << "Router *Router::select(QString url, QString method)";
     qInfo() << "OK:" << url << route;
 #endif
-            return route;
+    return route;
         }
 #ifdef DEBUG
         else {
@@ -85,10 +79,14 @@ Router *Router::select(QString url, QString method)
 
 Page *Router::getPage(const char *url) {
 #ifdef DEBUG
-    qInfo() << "Page *Router::getPage(const char *url)";
+    qInfo() << "\n    Page *Router::getPage(" << url << ")";
+    qInfo() << m_pages;
 #endif
     Page *page;
     if (!m_pages.contains(url)) {
+#ifdef DEBUG
+    qInfo() << "if (!m_pages.contains(url))";
+#endif
         QString file = root + url;
         page = new Page(root, url);
         if (QFile::exists(file)) {
@@ -109,7 +107,7 @@ void Router::setUrl(QString newUrl) { m_url = newUrl; }
 QString Router::getUrl() const { return m_url; }
 
 void Router::setDefaultPage(QString newDefaultPage) { m_defaultPage = newDefaultPage; }
-QString Router::getDefaultPage() { return m_defaultPage; }
+QString Router::getDefaultPage() const { return m_defaultPage; }
 
 void Router::setObjGlob(ObjGlob *newObj) { m_globObject = newObj; }
 ObjGlob *Router::getObjGlob() const { return m_globObject; }
@@ -122,32 +120,20 @@ void Router::updateService(Service *newService) {
 }
 
 
-bool Router::route(FCGIRequest &req, QString url, Request *obj)
+Page *Router::route(FCGIRequest &req, QString url)
 {
-    FCGIRequest *FCGIReq = new FCGIRequest(req);
 #ifdef DEBUG
-    qInfo() << "bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
+    qInfo() << "\n    bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
     qInfo() << "root:" << root;
     qInfo() << "_routes:" << _routes;
     for(Router* router: _routes)
         qInfo() << router << router->getUrl();
 #endif
-//    for(Router* it: _routes)
-//        if (url.startsWith(it->getUrl()))
-//            return it->route(req, url, obj);
 
-//    setPostData(FCGIReq, obj);
     Page *page;
-//    if (url == "/")
-//        url = m_defaultPage;
-
     page = getPage(url.toUtf8());
 
-//    service->request(req, page);
-    req.send(page);
-
-    return true;
-
+    return page;
 }
 
 
@@ -159,7 +145,8 @@ void Router::pageChanged(const QString &path) {
     key = key.remove(0, root.size());
 
 #ifdef DEBUG
-    std::cout << "request: " << std::endl;
+    qInfo() << "\n    void Router::pageChanged(const QString &path)";
+    qInfo() << "request: ";
     qInfo() << "path: [" + path + "]";
     qInfo() << "key: [" + key + "]";
 #endif

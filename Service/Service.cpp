@@ -61,14 +61,6 @@ Router *Service::mainRouter() {
     return m_mainRouter;
 }
 
-void Service::setDefaultPage(QString newDefaultPage) {
-    m_defaultPage = newDefaultPage;
-}
-
-QString Service::getDefaultPage() {
-    return m_defaultPage;
-}
-
 void Service::setObjGlob(ObjGlob *newObj)
 {
     m_globObject = newObj;
@@ -77,14 +69,6 @@ void Service::setObjGlob(ObjGlob *newObj)
 ObjGlob *Service::getObjGlob() const
 {
     return m_globObject;
-}
-
-void Service::request(FCGIRequest &req, Page *page)
-{
-    QByteArray pageOut = page->contentType().toUtf8();
-    pageOut += "\n\n";
-    pageOut += page->out(m_globObject, req).toUtf8();
-    req.send(pageOut);
 }
 
 void Service::componentComplete() {
@@ -100,7 +84,10 @@ void Service::componentComplete() {
     // создаем и запускаем прослушивание в отдельном потоке:
     socketId = FCGX_OpenSocket(cgi().toUtf8(), queue());
     QList<RouterListen*> routerListens;
+#ifdef DEBUG
     threads = 1;
+#endif
+
     for (int i = 0; i < threads; i++) {
         RouterListen* req = new RouterListen(mutex, socketId, m_routes, m_globObject);
         routerListens << req;
@@ -109,7 +96,6 @@ void Service::componentComplete() {
     for (Router* r: m_routes)
         r->updateService(this);
 
-    qInfo() << __LINE__ << threads;
     for (RouterListen *routerListen: routerListens)
         routerListen->start();
 }

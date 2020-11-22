@@ -20,14 +20,15 @@ RouterCSS::RouterCSS(QString root)
       cssWatcher(new QFileSystemWatcher)
 {}
 
-bool RouterCSS::route(FCGIRequest &req, QString url, Request */*obj*/)
+Page *RouterCSS::route(FCGIRequest &req, QString url)
 {
     read(root + url);
 
     Page* cssPage = new Page(Page::CSS, out(root + url));
-    req.send(cssPage);
+//    req.send(cssPage);
 
-    return true;
+//    return true;
+    return cssPage;
 }
 
 bool RouterCSS::read(QString file)

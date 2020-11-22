@@ -12,11 +12,10 @@ Chunk::Chunk(/*QString prefix, */QString url, QObject *parent)
     : QObject(parent)
 {
     #ifdef DEBUG
-        qInfo() << "Chunk::Chunk(QString prefix, QString url, QObject *parent)";
-//        qInfo() << "prefix:" << prefix;
+        qInfo() << "\n    Chunk::Chunk(QString prefix, QString url, QObject *parent)";
         qInfo() << "url:" << url;
     #endif
-    QFile f(/*prefix +*/ url);
+    QFile f(url);
     if (!f.open(QIODevice::ReadOnly)) {
         m_chunk = "<h1>Chunk (" + url + ") not found!</h1>";
 
@@ -30,47 +29,6 @@ QString Chunk::out() const {
 }
 
 
-
-//QString Chunks::chunk(QString url) {
-//    Chunk* _chunk;
-//    if (!m_chunks.contains(url)) {
-//        QString file = m_root + url;
-//        _chunk = new Chunk(m_root, url);
-//        if (QFile::exists(file)) {
-//            m_chunkWatcher->addPath( file );
-//            m_chunks[url] = _chunk;
-//#ifdef DEBUG
-//            qInfo() << "chunkWatcher->files():" << m_chunkWatcher->files();
-//#endif
-//        }
-//    }
-//    else _chunk = m_chunks[url];
-
-//    return _chunk->out();
-//}
-
-//void Chunks::chunkChanged(const QString &path)
-//{
-//    if (!path.startsWith(m_root))
-//        return;
-
-//    QString key = path;
-//    key = key.remove(0, m_root.size());
-
-//#ifdef DEBUG
-//    std::cout << "request: " << std::endl;
-//    qInfo() << "path: [" + path + "]";
-//    qInfo() << "key: [" + key + "]";
-//#endif
-
-//    if (m_chunks.contains(key)) {
-//        m_chunks.remove(key);
-//        m_chunkWatcher->removePath(path);
-//#ifdef DEBUG
-//        qInfo() << path + " removed";
-//#endif
-//    }
-//}
 
 Chunks::Chunks(QObject *parent)
     : m_chunkWatcher(new QFileSystemWatcher(parent))
