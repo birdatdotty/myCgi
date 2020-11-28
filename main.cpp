@@ -10,6 +10,7 @@
 #include "Service/Service.h"
 #include "Service/RouterCSS.h"
 #include "Service/RouterJS.h"
+#include <Service/RouterPost.h>
 
 
 #include <QCoreApplication>
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<RouterCSS>("DefaultRouter", 1,0, "RouterCSS");
     qmlRegisterType<RouterJS>("DefaultRouter", 1,0, "RouterJS");
+    qmlRegisterType<RouterPost>("DefaultRouter", 1,0, "RouterPost");
 
     QQmlEngine engine;
 //    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");

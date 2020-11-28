@@ -33,7 +33,7 @@ public:
 
     QString url(const Router *router);
     // QJSEngine:
-    Q_INVOKABLE QString url();
+    Q_INVOKABLE QString url(QString str = "");
     Q_INVOKABLE QString uri();
     Q_INVOKABLE QString body();
     Q_INVOKABLE QString val(QString key);
@@ -43,20 +43,19 @@ public:
     Q_INVOKABLE QString get(QString key);
     Q_INVOKABLE QString chunk(QString chunkPath);
     Q_INVOKABLE QString script(QString scriptPath);
+    Q_INVOKABLE QString router(QString str);
 
     Q_INVOKABLE bool testPath(QString key, QString value);
 
-    Q_INVOKABLE QString t() {return "Q_INVOKABLE QString t()";}
-
-    void setRequest(FCGX_Request *newRequest) {
-        req.setRequest(newRequest);
-//        FCGX_Request request;
-    }
+    void setRouter(Router* newRouter);
+    QString eng(QString str);
 
     QJsonObject obj;
     FCGIRequest &req;
 private:
     QJsonObject postData;
+    QJSEngine engine;
+    Router* _router;
 
     int m_count;
 

@@ -1,51 +1,43 @@
 import Service 1.0
-import ClassicHTML 1.0
-
+import DefaultRouter 1.0
 
 Service {
     id: main
-    root: "/home/2.old/"
-    // Глубина стека запросов
-    queue: 400
-    // Задаем socket
-    cgi: ":9000"
-    threads: 8
+    root: "/home/2.old/" // путь, который используется далее
+
+    cgi: ":9000" // Задаем socket
+    queue: 400 // Глубина стека запросов
+    threads: 8 // кол-во потоков обрабатывающих запрос
 
     objGlob: ObjGlob {
         id: obj
-        defaultPage: "/index.html"
-        chunks: main.root + "/chunks"
+        chunks: main.root + "/chunks/"
         scripts: main.root + "/scripts"
     }
 
-//    RouterCSS {
-//        root: main.root
-//        url: "/css"
-//    }
-//    RouterJS {
-//        root: main.root;
-//        url: "/js"
-//    }
-//    RouterPost {
-//        root: main.root;
-//        url: "/post"
-//    }
+    RouterCSS {
+        root: main.root
+        url: "/css"
+    }
+    RouterJS {
+        root: main.root;
+        url: "/js"
+    }
+    RouterPost {
+        root: main.root;
+        url: "/post"
+    }
 
     Router {
-        objGlob: main.objGlob
-
         root: main.root + "/html";
         url: "/";
-        defaultPage: "/index.html"
+        defaultPage: "index.html"
     }
 }
 
 /*
 post:
-QJSEngine engine;
-engine.eval(Script.qj)
+page = new Page(Page.HTML, "Hello, world!")
 
-Script.qj:
-ret.type = "text/css"
-ret.body = "* {color: red}"
+page.out()
 */

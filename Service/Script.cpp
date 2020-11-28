@@ -29,8 +29,7 @@ QString Script::out() const {
     return m_script;
 }
 
-Scripts::Scripts(QObject *parent)
-//    : m_chunkWatcher(new QFileSystemWatcher(parent))
+Scripts::Scripts(QObject */*parent*/)
 {
 }
 

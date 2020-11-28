@@ -7,51 +7,39 @@
     <script src="/js/header.js" charset="utf-8"></script>
   </head>
   <body>
-    <h1>Добро пожаловать на мой сайт</h1> Obj.page('url')
-    <h2>извиняюсь за столь безобразное оформление, я занимался разработкой сервером, который отдает данную страницу</h2>
+    <h1>Добро пожаловать на мой сайт</h1>
+    <h2>извиняюсь за столь безобразное оформление, я занимался разработкой сервера, который отдает данную страницу</h2>
     <div id="menu">
-      Obj.script("/menu.qj")
+      Obj.script(/menu.qj)
     </div>
-     <h1>Obj.chunk("/chunk1.chunk")</h1>
-    <form action="/post/Obj.url()" method="post" onsubmit="send(this);return false">
-    <!-- <form action="Obj.url()" method="post"> -->
-    <!-- <form action="/put.unix" method="post" onsubmit="send(this);return false"> -->
+     <h1>Obj.chunk(/chunk1.chunk)</h1>
+     ---- page: Obj.url() ----<br/>
+     ---- router: Obj.router(sss fdf) ----
+    <form action="Obj.url()" method="post" onsubmit="send(this);return false">
       <p><label for="">str1:</label><input type="text" name="str1">
       <p><label for="">str2:</label><input type="text" name="str2">
       <p><label for="">str3:</label><input type="text" name="str3">
       <p><input type="submit" value="Отправить"></p>
-      Вы отпавили: <b>Obj.val("str1")</b><br>
-      Вы отпавили: <b>Obj.post("str1")</b>
     </form>
-    <form action="Obj.page('url')" onsubmit="send(this);return false">
-     <p><input type="file" name="photo" required multiple
-       title="Загрузите одну или несколько фотографий"></p>
-     <p><input type="submit" value="Отправить"></p>
-    </form>
-    post: Ob3j.post("str1")
-    <br>
-    post: Ob4j.get("str1")
+
     <main>
-    	Ob2j.file("/etc/fstab")
+    	Obj.file(/etc/fstab)
     </main>
     <script>
       function send(f) {
         // f - form
-        console.log(f)
         let form = new FormData(f)
         form.append("id","123");
         var xhr = new XMLHttpRequest();//new URL(document.URL).pathname
-        xhr.open('POST', "/post" + new URL(f.action).pathname, true);
-        //xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
-        xhr.onreadystatechange = function() {
-          if (this.readyState != 4) return;
 
+        xhr.open('POST', "/post" + new URL(f.action).pathname);
+        xhr.response = "json";
+        xhr.onload = function() {
           console.log( this.responseText );
         }
 
-        xhr.send(form);
         f.reset();
-        f.outerHTML
+        xhr.send(form);
       }
     </script>
   </body>

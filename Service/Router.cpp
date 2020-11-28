@@ -123,8 +123,6 @@ void Router::updateService(Service *newService) {
 Page *Router::route(FCGIRequest &req, QString url)
 {
 #ifdef DEBUG
-    qInfo() << "\n    bool Router::route(FCGX_Request &req, QString url, Obj *obj)";
-    qInfo() << "root:" << root;
     qInfo() << "_routes:" << _routes;
     for(Router* router: _routes)
         qInfo() << router << router->getUrl();

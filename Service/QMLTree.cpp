@@ -1,10 +1,5 @@
 #include "QMLTree.h"
-
-QMLTree::QMLTree(QObject *parent) : QObject(parent)
-{
-
-}
-
+#include <QDebug>
 
 #include "QMLTree.h"
 #include "Router.h"
@@ -14,6 +9,10 @@ QMLTree::QMLTree(QObject *parent) : QObject(parent)
     #include <QDebug>
     #include <iostream>
 #endif
+
+QMLTree::QMLTree(QObject *parent) : QObject(parent)
+{}
+
 
 QQmlListProperty<Router> QMLTree::routes()
 {

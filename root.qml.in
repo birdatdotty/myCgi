@@ -5,14 +5,13 @@ import DefaultRouter 1.0
 Service {
     id: main
     root: "@CMAKE_INSTALL_PREFIX@/var/@CMAKE_PROJECT_NAME@"
-    // Глубина стека запросов
-    queue: 400
-    // Задаем socket
-    cgi: ":9000"
-    threads: 8
+
+    cgi: ":9000" // Задаем socket
+    queue: 400 // Глубина стека запросов
+    threads: 8 // кол-во потоков обрабатывающих запрос
 
     objGlob: ObjGlob {
-      id: obj
+        id: obj
         chunks: main.root + "/chunks"
         scripts: main.root + "/scripts"
     }
@@ -25,15 +24,11 @@ Service {
         root: main.root;
         url: "/js"
     }
-/*
     RouterPost {
         root: main.root;
         url: "/post"
     }
-*/
     Router {
-        objGlob: main.objGlob
-
         root: main.root + "/html";
         url: "/";
         defaultPage: "/index.html"

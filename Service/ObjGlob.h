@@ -40,11 +40,6 @@ class ObjGlob:
                READ getDefaultPage
                WRITE setDefaultPage)
 
-// depricated
-    Q_PROPERTY(int threads
-               READ getThreads
-               WRITE setThreads)
-// end depricated
 
 public:
     ObjGlob(Router *router = nullptr);
@@ -56,21 +51,12 @@ public:
     void setRoot(QString newRoot);
     QString getRoot() const;
 
-// depricated
-    int getThreads() const { return threads; }
-    void setThreads(int newThreads) { threads = newThreads; }
-// end depricated
-
 private:
     QMap<QString,QString> users;
     QMap<QString,QString> ids;
     Router *m_router;
     int m_count;
     QString m_root;
-
-// depricated
-    int threads;
-// end depricated
 
 
     QString getRandomString(int randomStringLength = 12) const;

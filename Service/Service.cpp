@@ -78,9 +78,6 @@ void Service::componentComplete() {
     qInfo() << "open FCGI on " << m_host;
 #endif
 
-
-
-
     // создаем и запускаем прослушивание в отдельном потоке:
     socketId = FCGX_OpenSocket(cgi().toUtf8(), queue());
     QList<RouterListen*> routerListens;

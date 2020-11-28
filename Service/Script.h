@@ -28,7 +28,7 @@ public:
     QString script(QJSEngine *engine, QString url);
 
 private:
-    QFileSystemWatcher* m_scriptWatcher;
+    QFileSystemWatcher m_scriptWatcher;
     QMap<QString, Script*> m_scriptsList;
     QString m_scriptsDir;
 

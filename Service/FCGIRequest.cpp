@@ -11,14 +11,7 @@
 
 FCGIRequest::FCGIRequest()
 {
-    engine = new QJSEngine;
 }
-
-//FCGIRequest::FCGIRequest(FCGX_Request request)
-//    : request(request)
-//{
-//    engine = new QJSEngine;
-//}
 
 QString FCGIRequest::url(const Router *router) const
 {
@@ -104,22 +97,7 @@ QJsonObject FCGIRequest::get2json() const
     return obj;
 }
 
-void FCGIRequest::finish() {
-    FCGX_Finish_r(&request);
-}
-
 FCGX_Stream *FCGIRequest::out(){
     return request.out;
 }
 
-#include <QTest>
-void FCGIRequest::send(QByteArray &byteArray) {
-    FCGX_PutStr(byteArray, byteArray.size(), request.out);
-    FCGX_Finish_r(&request);
-
-//    QTest::qWait(6000);
-}
-
-void FCGIRequest::setEngine(QJSEngine *newEngine) {
-    engine = newEngine;
-}

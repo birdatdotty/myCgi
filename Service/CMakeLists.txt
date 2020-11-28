@@ -18,11 +18,11 @@ ENDIF()
 add_library(Service STATIC
     Service.cpp
     RouterListen.cpp
+    RouterListen_run.cpp
     FCGIRequest.cpp
     ObjGlob.cpp
     Chunk.cpp
     Router.cpp
-    Router_ParseRequest.cpp
     QMLTree.cpp
     Request.cpp
     DefaultPage.cpp
@@ -31,6 +31,7 @@ add_library(Service STATIC
 
     RouterCSS.cpp
     RouterJS.cpp
+    RouterPost.cpp
 
 
     RouterListen.h
@@ -46,7 +47,8 @@ add_library(Service STATIC
     Page.h
 
     RouterCSS.h
-    RouterJS.h)
+    RouterJS.h
+    RouterPost.h)
 
 target_link_libraries(Service fcgi Qt5::Core Qt5::Qml Qt5::Quick Qt5::Test)
 

@@ -132,7 +132,7 @@ QString Request::url(const Router* router) {
     return req.url(router);
 }
 
-QString Request::url()
+QString Request::url(QString)
 {
     return req.clearUrl();
 }
@@ -190,8 +190,29 @@ QString Request::script(QString scriptPath)
     qInfo() << "\n    QString Request::script(" << glob->getScriptsDir() + scriptPath << ")";
 #endif
 
-    QString s = glob->script(req.engine, glob->getScriptsDir() + scriptPath);
+
+    QJSEngine engine;
+    QString s = glob->script(&engine, glob->getScriptsDir() + scriptPath);
     return s;
+}
+
+QString Request::router(QString str)
+{
+    int split;
+    QString routeFun;
+    QString routeParam;
+    QString retVal;
+
+    split = str.indexOf(' ');
+    if (split == -1)
+        QMetaObject::invokeMethod(_router, str.trimmed().toUtf8(), Qt::DirectConnection,
+                                  Q_RETURN_ARG(QString, retVal));
+    else
+        QMetaObject::invokeMethod(_router, str.mid(0,split).trimmed().toUtf8(), Qt::DirectConnection,
+                                  Q_RETURN_ARG(QString, retVal),
+                                  Q_ARG(QString, str.mid(split+1).trimmed()));
+
+    return retVal;
 }
 
 bool Request::testPath(QString key, QString value) {
@@ -207,4 +228,28 @@ bool Request::testPath(QString key, QString value) {
         return true;
 
     return false;
+}
+
+void Request::setRouter(Router *newRouter) {
+    _router = newRouter;
+}
+
+QString Request::eng(QString str) {
+    QString fun;
+    QString paramStr;
+    int posOpenBraket;
+    int posCloseBraket;
+
+    posOpenBraket = str.indexOf('(');
+    posCloseBraket = str.lastIndexOf(')');
+    paramStr = str.mid(posOpenBraket + 1,
+                        posCloseBraket - posOpenBraket - 1 ).trimmed();
+
+    fun = str.mid(4,posOpenBraket - 4);
+    QString retVal;
+    QMetaObject::invokeMethod(this, fun.toUtf8(), Qt::DirectConnection,
+                              Q_RETURN_ARG(QString, retVal),
+                              Q_ARG(QString, paramStr));
+
+    return retVal;
 }

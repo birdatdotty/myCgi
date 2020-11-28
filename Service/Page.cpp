@@ -126,7 +126,7 @@ QString Page::contentType() {
         return "Content-type: application/javascript";
 
     if (type == JSON)
-        return "application/json";
+        return "Content-type: application/json";
 
     return "";
 }

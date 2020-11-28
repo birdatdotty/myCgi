@@ -14,7 +14,7 @@ class Page : public QObject
 {
     Q_OBJECT
 public:
-    enum TYPE{HTML,JS,CSS,JSON};
+    enum TYPE{HTML, JS, CSS, JSON};
     explicit Page(QStringList list, QObject *parent = nullptr);
     explicit Page(QString prefix, QString url, QObject *parent = nullptr);
     explicit Page(TYPE type, QByteArray &byteArray, QObject *parent = nullptr);

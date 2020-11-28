@@ -3,17 +3,16 @@ import DefaultRouter 1.0
 
 Service {
     id: main
-    root: "/home/2.old/"
-    // Глубина стека запросов
-    queue: 400
-    // Задаем socket
-    cgi: ":9000"
-    threads: 16
+    root: "/home/2.old/" // путь, который используется далее
+
+    cgi: ":9000" // Задаем socket
+    queue: 400 // Глубина стека запросов
+    threads: 8 // кол-во потоков обрабатывающих запрос
 
     objGlob: ObjGlob {
         id: obj
         chunks: main.root + "/chunks/"
-        scripts: "/home/2.old/scripts"
+        scripts: main.root + "/scripts"
     }
 
     RouterCSS {
@@ -24,10 +23,10 @@ Service {
         root: main.root;
         url: "/js"
     }
-//    RouterPost {
-//        root: main.root;
-//        url: "/post"
-//    }
+    RouterPost {
+        root: main.root;
+        url: "/post"
+    }
 
     Router {
         root: main.root + "/html";

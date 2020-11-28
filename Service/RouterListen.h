@@ -18,13 +18,7 @@ public:
 //    RouterListen(QMutex &mutex, int socketId, QString str)
     explicit RouterListen(QMutex &mutex, int socketId, QList<Router *> router, ObjGlob* objGlob, QObject *parent = nullptr);
 
-    FCGIRequest *FCGIReq;
-    void setEngine(QJSEngine* newEngine) {
-        engine = newEngine;
-        FCGIReq->setEngine(newEngine);
-    }
-    void initEngine();
-
+    FCGIRequest FCGIReq;
 
 protected:
     void run() override;
@@ -32,17 +26,24 @@ protected:
 private:
     QMutex &mutex;
     QString path;
-    int listenQueueBacklog;
+//    int listenQueueBacklog;
     int socketId;
     QList<Router *> router;
     ObjGlob* objGlob;
-//    FCGIRequest *request;
-    FCGX_Request fcgx_request;
-    QJSEngine* engine;
-    Request *request;
+    QJSEngine engine;
+    Request* request;
 
+    QJSValue jsObj;
+    QJSValue jsObjGlob;
+
+    QString str;
+    QStringList list;
+    QByteArray byteArray;
+    Page *page;
 
     int rc;
+
+    void fcgx_accept_r();
 };
 
 #endif // ROUTERLISTEN_H

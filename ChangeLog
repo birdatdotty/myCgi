@@ -31,3 +31,12 @@
 
 ## [0.4.0] - 2020-11-08
 - I prepered for thread responce, but add any bugs
+
+## [0.6.1] - 2020-11-25
+- the QJSEngine tormented me (app crash on "ab -c 160 -n100000 http://localhost/").
+  I rebuild without QJSEngine
+- broak js and css routes
+
+## [0.6.2]
+## [0.6.3]
+- I find mistake. Break need after find current route (RouterListen::run).

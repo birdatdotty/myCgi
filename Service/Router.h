@@ -65,6 +65,10 @@ public:
 
     virtual void updateService(Service* newService);
 
+Q_INVOKABLE QString sss(QString s="") {
+        return "exec Q_INVOKABLE QString sss(" + s + ")";
+}
+
 signals:
     void rootChanged();
     void urlChanged();
@@ -82,9 +86,6 @@ protected:
 
     Page* getPage(const char *url);
 
-    // select route
-
-    // routes:
 public:
     virtual Page* route(FCGIRequest &req, QString url);
 
