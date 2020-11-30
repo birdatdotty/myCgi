@@ -23,8 +23,8 @@ window.onpopstate = function (event) {
   var path = new URL(document.location).pathname
   if (path.slice(-1) === "/")
     path += defPage
-    
-  loadDiv(, main)
+
+  loadDiv(path, main)
 }
 
 function loadDiv(url, div) {
