@@ -1,19 +1,44 @@
 <script>
+/// global
+var defPage = "index.html";
+
+/// current page
+activePage(menu)
+
+
+function activePage(menu) {
+  var url = new URL(document.URL).pathname;
+  if (url.slice(-1) === "/")
+    url += defPage;
+
+  menu.querySelectorAll("a").forEach(function(a){a.parentNode.classList.remove("active")})
+  menu.querySelector("a[href='"+url+"']").parentNode.classList.add("active")
+}
+
 window.onpopstate = function (event) {
   var page = new URL(document.location).pathname
-  this.active(page)
-  this.lp(document.location, false)
+  //this.active(page)
+  console.log("document.location:", document.location)
+  //this.lp(document.location, false)
+  var path = new URL(document.location).pathname
+  if (path.slice(-1) === "/")
+    path += defPage
+    
+  loadDiv(, main)
 }
 
 function loadDiv(url, div) {
+  var path = "/chunks/html" + url
   var xhr = new XMLHttpRequest();//new URL(document.URL).pathname
 
-  xhr.open('POST', url, true);
+  xhr.open('POST', path, true);
   xhr.onreadystatechange = function() {
     if (this.readyState != 4) return;
 
     //console.log( this.responseText );
     div.innerHTML = this.responseText
+
+    activePage(menu)
   }
 
   xhr.send();
@@ -26,7 +51,7 @@ menu.querySelectorAll("a").forEach(function(a){
   a.onclick = function(ev) {
     ev.preventDefault();
     var path = new URL(this.href).pathname
-    loadDiv("/chunks/html" + path, main)
+    loadDiv(path, main)
     window.history.pushState('', 'New Page Title', path);
   };
 })
