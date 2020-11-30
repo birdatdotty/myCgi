@@ -1,0 +1,16 @@
+<script>
+/// global
+var defPage = "index.html";
+
+function activePage(menu) {
+  var url = new URL(document.URL).pathname;
+  if (url.slice(-1) === "/")
+    url += defPage;
+
+  menu.querySelectorAll("a").forEach(function(a){a.parentNode.classList.remove("active")})
+  menu.querySelector("a[href='"+url+"']").parentNode.classList.add("active")
+}
+
+/// current page
+activePage(menu)
+</script>

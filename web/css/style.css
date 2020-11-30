@@ -4,6 +4,7 @@ body {
 }
 main {
   margin: 20px 40px;
+  height: 200vh;
 }
 #menu {
   position: sticky;

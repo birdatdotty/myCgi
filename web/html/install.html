@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Тег FORM, атрибут method</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/header.js" charset="utf-8"></script>
   </head>
   <body>
     <h1>Добро пожаловать на мой сайт</h1>
@@ -12,29 +11,11 @@
     <div id="menu">
       Obj.script(/menu.qj)
     </div>
-
     <main id=main>
-      Obj.chunk(/html/test.html)
+      Obj.chunk(/html/install.html)
     </main>
-    Obj.file(/etc/fstab)
-    Obj.chunk(/footer.chunk)
     Obj.chunk(/menuLoad.chunk)
-    <script>
-      function send(f) {
-        // f - form
-        let form = new FormData(f)
-        form.append("id","123");
-        var xhr = new XMLHttpRequest();//new URL(document.URL).pathname
+    Obj.chunk(/footer.chunk)
 
-        xhr.open('POST', "/post" + new URL(f.action).pathname);
-        xhr.response = "json";
-        xhr.onload = function() {
-          console.log( this.responseText );
-        }
-
-        f.reset();
-        xhr.send(form);
-      }
-    </script>
   </body>
 </html>

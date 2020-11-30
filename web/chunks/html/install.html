@@ -1,0 +1,60 @@
+<h2>У меня стоит archlinux с nginx, потом стоит centos 8 c моей программой, работающий по FastCGI.</h2>
+<h3>Мне нужно было только добавить сайт, полная инструкция <a target="_blank" href="https://wiki.archlinux.org/index.php/Certbot_(Русский)">на wiki archlinux</a></h3>
+
+<ul>
+<li>На ArchLinux (proxy)
+<ul>
+
+<li>Настроил переадресацию nginx на второй сервер:
+  /etc/nginx/sites-enabled/www.dotty.su:
+  <pre>
+server {
+  server_name www.dotty.su dotty.su;
+
+  location / {
+    include /etc/nginx/fastcgi_params;
+    fastcgi_pass 192.168.0.200:9000; # внутрений адрес по которому доступна моя программа
+    # fastcgi_pass 127.0.0.1:9000; # если всё на одном сервере
+  }
+}
+</pre>
+</li>
+<li>
+  Добавил сертификат для нового сайта (www.dotty.su)
+  <pre>
+1. certbot --nginx
+2. вырал нужные домены:
+Select the appropriate numbers separated by commas and/or spaces, or leave input
+blank to select all options shown (Enter 'c' to cancel): 1 2
+  </pre>
+</li>
+</ul>
+</li>
+<li>
+на CentOS (сам сайт)
+<ul>
+<li>
+по простому пути устанавливаем программу:
+<pre>
+git clone https://github.com/birdatdotty/myCgi.git
+cd myCgi
+mkdir build && cd $_
+cmake ..
+make && make install
+</pre>
+</li>
+<li>
+запускаем программу
+<pre>systemctl start myCgi2.service</pre>
+</li>
+<li>
+если нужен автозапуск
+<pre>systemctl enable myCgi2.service</pre>
+</li>
+<li>
+если включен firewalld, то надо разрешить порт (он прописывается в конфиге, и скорей всего 9000)
+<pre>firewall-cmd --zone=public --add-port=9000/tcp --permanent</pre>
+</li>
+</ul>
+</li>
+</ul>

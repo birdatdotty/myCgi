@@ -22,6 +22,8 @@ Chunk::Chunk(/*QString prefix, */QString url, QObject *parent)
         return;
     }
     m_chunk = f.readAll();
+//    m_chunkWatcher
+
 }
 
 QString Chunk::out() const {
@@ -57,25 +59,4 @@ QString Chunks::chunk(QString url)
     return _chunk->out();
 }
 
-//void Chunks::chunkChanged(const QString &path)
-//{
-//    if (!path.startsWith(m_chunksDir))
-//        return;
 
-//    QString key = path;
-//    key = key.remove(0, m_chunksDir.size());
-
-//#ifdef DEBUG
-//    std::cout << "request: " << std::endl;
-//    qInfo() << "path: [" + path + "]";
-//    qInfo() << "key: [" + key + "]";
-//#endif
-
-//    if (m_chunksDir.contains(key)) {
-//        m_chunksDir.remove(key);
-//        m_chunkWatcher->removePath(path);
-//#ifdef DEBUG
-//        qInfo() << path + " removed";
-//#endif
-//    }
-//}

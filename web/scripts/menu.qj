@@ -16,9 +16,7 @@ var menuSrc = [
   ]},
   {"name":"item-3", "href":"#item-3", "sub":[]},
   {"name":"test", "href":"/test.html", "sub":[]},
-  {"name":"form", "href":"#item-5", "sub":[
-    {"name":"item-2-4-3", "href":"#item-2-4-3", "sub":[]}
-  ]}
+  {"name":"Настройка", "href":"/install.html", "sub":[]}
 ]
 
 function li(name) {

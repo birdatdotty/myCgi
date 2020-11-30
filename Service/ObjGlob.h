@@ -61,6 +61,10 @@ private:
 
     QString getRandomString(int randomStringLength = 12) const;
 
+public slots:
+    void chunkChanged(const QString& path);
+
+
 signals:
     void sigRoot();
 };

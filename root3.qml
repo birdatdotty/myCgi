@@ -29,6 +29,11 @@ Service {
     }
 
     Router {
+        root: main.root
+        url: "/chunks"
+    }
+
+    Router {
         root: main.root + "/html";
         url: "/";
         defaultPage: "index.html"

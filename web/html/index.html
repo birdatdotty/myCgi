@@ -11,9 +11,11 @@
     <div id="menu">
       Obj.script(/menu.qj)
     </div>
-    <main>
-      Obj.chunk(/html/index.chunk)
+    <main id="main">
+      Obj.chunk(/html/index.html)
     </main>
+    Obj.chunk(/footer.chunk)
+    Obj.chunk(/menuLoad.chunk)
     <script>
       function send(f) {
         // f - form
@@ -33,6 +35,7 @@
         f.reset();
         f.outerHTML
       }
+
     </script>
   </body>
 </html>

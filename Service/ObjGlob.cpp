@@ -14,6 +14,9 @@ ObjGlob::ObjGlob(Router *router)
       Scripts(router),
       m_router(router)
 {
+    QObject::connect(m_chunkWatcher, &QFileSystemWatcher::fileChanged,
+            this, &ObjGlob::chunkChanged);
+
 }
 
 QString ObjGlob::auth(QString login, QString password)
@@ -55,6 +58,31 @@ QString ObjGlob::getRandomString(int randomStringLength) const
         randomString.append(nextChar);
     }
     return randomString;
+}
+
+void ObjGlob::chunkChanged(const QString &path)
+{
+    if (!path.startsWith(m_chunksDir))
+        return;
+
+    QString key = path;
+    key = key.remove(0, m_chunksDir.size());
+
+#ifdef DEBUG
+    std::cout << "request: " << std::endl;
+    qInfo() << "path: [" + path + "]";
+    qInfo() << "key: [" + key + "]";
+    qInfo() << "m_chunksDir:" << m_chunksList;
+    qInfo() << "m_chunkWatcher->files():" << m_chunkWatcher->files();
+#endif
+
+    if (m_chunksList.contains(key)) {
+        m_chunksList.remove(key);
+        m_chunkWatcher->removePath(path);
+#ifdef DEBUG
+        qInfo() << path + " removed";
+#endif
+    }
 }
 
 void ObjGlob::setRoot(QString newRoot)  { m_root = newRoot; }

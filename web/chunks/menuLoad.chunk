@@ -1,0 +1,36 @@
+<script>
+window.onpopstate = function (event) {
+  var page = new URL(document.location).pathname
+  this.active(page)
+  this.lp(document.location, false)
+}
+
+function loadDiv(url, div) {
+  var xhr = new XMLHttpRequest();//new URL(document.URL).pathname
+
+  xhr.open('POST', url, true);
+  xhr.onreadystatechange = function() {
+    if (this.readyState != 4) return;
+
+    //console.log( this.responseText );
+    div.innerHTML = this.responseText
+  }
+
+  xhr.send();
+}
+
+
+
+
+menu.querySelectorAll("a").forEach(function(a){
+  a.onclick = function(ev) {
+    ev.preventDefault();
+    var path = new URL(this.href).pathname
+    loadDiv("/chunks/html" + path, main)
+    window.history.pushState('', 'New Page Title', path);
+  };
+})
+
+
+
+</script>

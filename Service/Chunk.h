@@ -25,13 +25,10 @@ public:
     QString getChunksDir() const { return m_chunksDir; }
     Q_INVOKABLE QString chunk(QString url);
 
-private:
+protected:
     QFileSystemWatcher* m_chunkWatcher;
     QMap<QString, Chunk*> m_chunksList;
     QString m_chunksDir;
-
-    void chunkChanged(const QString& path);
-
 
 };
 
