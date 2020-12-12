@@ -1,4 +1,4 @@
 #define ETC_FILE "@PROJ_CONF@"
-
-#include <QDebug>
-    
+#define INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define PROJECT_NAME "@CMAKE_PROJECT_NAME@"
+#define IMPORT_PATH INSTALL_PREFIX "/lib/" PROJECT_NAME "/plugins/"

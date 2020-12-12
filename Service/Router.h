@@ -19,7 +19,7 @@
 
 class Service;
 
-class Router : public QMLTree
+class Router: public QMLTree
 {
     Q_OBJECT
     Q_PROPERTY(QString  url
@@ -42,6 +42,10 @@ class Router : public QMLTree
                WRITE setDefaultPage
                NOTIFY sigDefaultPage)
 
+    Q_PROPERTY(Page::TYPE type
+               READ getTypePage
+               WRITE setTypePage
+               NOTIFY sigTypePage)
 
 public:
     explicit Router(QString root = "", QObject *parent = nullptr);
@@ -63,11 +67,14 @@ public:
     void setObjGlob(ObjGlob* newObj);
     ObjGlob* getObjGlob() const;
 
-    virtual void updateService(Service* newService);
+    void setTypePage(Page::TYPE newPageType) {
+        pageType = newPageType;
+    }
+    Page::TYPE getTypePage() {
+        return pageType;
+    }
 
-Q_INVOKABLE QString sss(QString s="") {
-        return "exec Q_INVOKABLE QString sss(" + s + ")";
-}
+    virtual void updateService(Service* newService);
 
 signals:
     void rootChanged();
@@ -77,8 +84,6 @@ signals:
 protected:
     QString root;
     QString m_url;
-    QFileSystemWatcher* m_pageWatcher;
-    QMap<QString, Page*> m_pages;
     Router* m_router;
 
 protected:
@@ -90,20 +95,20 @@ public:
     virtual Page* route(FCGIRequest &req, QString url);
 
 public slots:
-    void pageChanged(const QString& path);
     Page *request(FCGIRequest &req);
 
 private:
-    Router* select(QString url, QString method);
     ObjGlob* m_globObject;
     QString m_defaultPage;
     Service* service;
+    Page::TYPE pageType;
 
 signals:
     void sigDefaultPage();
     void sigUrl();
     void sigRoot();
     void sigObjGlob();
+    void sigTypePage();
 };
 
 #endif // ROUTE_H

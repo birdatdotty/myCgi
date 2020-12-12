@@ -8,13 +8,10 @@
 // http://chriswu.me/blog/getting-request-uri-and-content-in-c-plus-plus-fcgi/
 
 #include "Service/Service.h"
-#include "Service/RouterCSS.h"
-#include "Service/RouterJS.h"
-#include <Service/RouterPost.h>
-
 
 #include <QCoreApplication>
 #include <QJSEngine>
+#include <QDir>
 
 #include <QQmlEngine>
 #include <QQmlComponent>
@@ -29,6 +26,7 @@ curl --header "Content-Type: application/x-www-form-urlencoded"   --request POST
 #include <string>
 #include <stdlib.h>
 #include <sys/stat.h>
+//#include <Service/RouterMySass.h>
 
 #include <fcgi_stdio.h>
 
@@ -50,14 +48,19 @@ int main(int argc, char *argv[])
     qmlRegisterType<Service>("Service", 1,0, "Service");
     qmlRegisterType<Router>("Service", 1,0, "Router");
     qmlRegisterType<ObjGlob>("Service", 1,0, "ObjGlob");
+    qmlRegisterType<Page>("Service", 1,0, "Page");
 
-    qmlRegisterType<RouterCSS>("DefaultRouter", 1,0, "RouterCSS");
-    qmlRegisterType<RouterJS>("DefaultRouter", 1,0, "RouterJS");
-    qmlRegisterType<RouterPost>("DefaultRouter", 1,0, "RouterPost");
+//    qmlRegisterType<RouterMySass>("RouterMySass", 1,0, "RouterMySass");
 
     QQmlEngine engine;
-//    engine.addImportPath("/usr/local/lib/myCgi2/plugins/");
-    engine.setImportPathList(QStringList() << "/usr/local/lib/myCgi2/plugins/");
+//    engine.addImportPath(IMPORT_PATH);
+//    engine.setImportPathList(QStringList() << IMPORT_PATH);
+    engine.setImportPathList(QStringList() <<
+                             QDir::currentPath() + "/Routers/" <<
+                             QDir::currentPath() <<
+                             IMPORT_PATH);
+//    Routers/
+    qInfo() << engine.importPathList();
 
     QString qmlFile;
     if (argc == 1)

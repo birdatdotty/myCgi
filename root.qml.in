@@ -16,6 +16,11 @@ Service {
         scripts: main.root + "/scripts"
     }
 
+    RouterHTML {
+        root: main.root
+        url: "/chunks/"
+    }
+
     RouterCSS {
         root: main.root
         url: "/css"
@@ -28,12 +33,12 @@ Service {
         root: main.root;
         url: "/post"
     }
-    Router {
+    RouterHTML {
         root: main.root
         url: "/chunks"
     }
 
-    Router {
+    RouterHTML {
         root: main.root + "/html";
         url: "/";
         defaultPage: "/index.html"

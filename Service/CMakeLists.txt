@@ -15,7 +15,8 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions( -DDEBUG )
 ENDIF()
 
-add_library(Service STATIC
+#add_library(Service STATIC
+add_library(Service SHARED
     Service.cpp
     RouterListen.cpp
     RouterListen_run.cpp
@@ -29,11 +30,6 @@ add_library(Service STATIC
     Script.cpp
     Page.cpp
 
-    RouterCSS.cpp
-    RouterJS.cpp
-    RouterPost.cpp
-
-
     RouterListen.h
     Service.h
     FCGIRequest.h
@@ -44,13 +40,20 @@ add_library(Service STATIC
     Request.h
     DefaultPage.h
     Script.h
-    Page.h
-
-    RouterCSS.h
-    RouterJS.h
-    RouterPost.h)
+    Page.h)
 
 target_link_libraries(Service fcgi Qt5::Core Qt5::Qml Qt5::Quick Qt5::Test)
-
+install(TARGETS Service LIBRARY DESTINATION lib/${CMAKE_PROJECT_NAME})
+install(FILES Chunk.h
+    DefaultPage.h
+    FCGIRequest.h
+    ObjGlob.h
+    Page.h
+    QMLTree.h
+    Request.h
+    Router.h
+    Service.h
+    Script.h
+  DESTINATION include/${CMAKE_PROJECT_NAME})
 #install(TARGETS ClassicHTML DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)
 #install(FILES qmldir DESTINATION lib/${CMAKE_PROJECT_NAME}/plugins/ClassicHTML)

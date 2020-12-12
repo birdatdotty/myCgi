@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.11)
 # cmake -DCMAKE_INSTALL_PREFIX=/usr .
 
 project(myCgi2
-    VERSION 0.6.8
+    VERSION 0.7.8
     DESCRIPTION "myCgi2lib description"
     LANGUAGES CXX)
 
@@ -16,7 +16,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Qml Quick REQUIRED)
@@ -29,6 +29,7 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions( -DDEBUG )
 ENDIF()
 
+
 set(PROJ_CONF
     "${CMAKE_INSTALL_PREFIX}/etc/${PROJECT_NAME}/root.qml")
 
@@ -37,14 +38,13 @@ configure_file(root.qml.in root.qml)
 configure_file(myCgi2.pc.in ${CMAKE_PROJECT_NAME}.pc @ONLY)
 configure_file(myCgi2.service.in ${CMAKE_PROJECT_NAME}.service)
 
-#add_library(Obj SHARED
-#    Obj.cpp
-#    Obj.h
-#    ObjGlob.cpp)
-#target_link_libraries(Obj fcgi Qt5::Core Qt5::Qml Qt5::Quick)
 
 add_subdirectory(Service)
-#include_directories(Service)
+
+add_subdirectory(Routers/RouterMySass)
+add_subdirectory(Routers/DefaultRouter2)
+add_subdirectory(Routers/RouterChunk)
+
 
 set(QML_IMPORT_PATH ${CMAKE_INSTALL_PREFIX}/plugins CACHE STRING "" FORCE)
 
@@ -65,6 +65,7 @@ add_executable(${CMAKE_PROJECT_NAME}
   config.h.in
   myCgi2.pc.in
   myCgi2.service.in
+  root.qml.in
 
   root.qml
   root2.qml
@@ -88,6 +89,7 @@ install(FILES   ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.service
 
 install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.pc
     DESTINATION lib/pkgconfig)
+
 
 #chunks  css  html  js  scripts
 install(DIRECTORY web/

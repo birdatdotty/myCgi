@@ -19,9 +19,9 @@ Page::Page(QStringList list, QObject *parent)
       type(HTML)
 {}
 
-Page::Page(QString prefix, QString url, QObject *parent)
+Page::Page(QString prefix, QString url, Page::TYPE type, QObject *parent)
     : QObject(parent),
-      type(HTML)
+      type(type)
 {
     QString str;
     QFile f(prefix + url);

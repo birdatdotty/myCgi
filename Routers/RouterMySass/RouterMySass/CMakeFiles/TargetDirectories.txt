@@ -1,0 +1,8 @@
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/install/strip.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/install/local.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/edit_cache.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/install.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/list_install_components.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/rebuild_cache.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/RouterMySass.dir
+/home/gluck/1/myCgi2/Routers/RouterMySass/RouterMySass/CMakeFiles/RouterMySass_autogen.dir

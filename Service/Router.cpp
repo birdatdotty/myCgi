@@ -15,14 +15,12 @@
 Router::Router(QString root, QObject *parent)
     : QMLTree(parent),
       root(root),
-      m_pageWatcher(new QFileSystemWatcher(this))
-{
-    connect(m_pageWatcher, &QFileSystemWatcher::fileChanged,
-            this, &Router::pageChanged);
-}
+      pageType(Page::HTML)
+{}
 
 Router::Router(Router &parent)
-    : root(parent.root)
+    : root(parent.root),
+      pageType(Page::HTML)
 {
 #ifdef DEBUG
     qInfo() << "\n    Router::Router(Router &parent)";
@@ -51,53 +49,8 @@ Page* Router::request(FCGIRequest &req)
     qInfo() << "_url:" << _url;
 #endif
 
-    return select(_url, _method)->route(req, _url);
-}
-
-Router *Router::select(QString url, QString method)
-{
-#ifdef DEBUG
-    qInfo() << "\n    Router *Router::select(QString url, QString method)";
-#endif
-    for (Router *route: _routes) {
-        if (url.startsWith(route->getUrl())) {
-#ifdef DEBUG
-    qInfo() << "OK:" << url << route;
-#endif
-    return route;
-        }
-#ifdef DEBUG
-        else {
-            qInfo() << "NOT:" << url;
-        }
-#endif
-    }
-
-    return this;
-}
-
-
-Page *Router::getPage(const char *url) {
-#ifdef DEBUG
-    qInfo() << "\n    Page *Router::getPage(" << url << ")";
-    qInfo() << m_pages;
-#endif
-    Page *page;
-    if (!m_pages.contains(url)) {
-#ifdef DEBUG
-    qInfo() << "if (!m_pages.contains(url))";
-#endif
-        QString file = root + url;
-        page = new Page(root, url);
-        if (QFile::exists(file)) {
-            m_pageWatcher->addPath( file );
-            m_pages[url] = page;
-        }
-    }
-    else
-        page = m_pages[url];
-
-    return page;
+//    return select(_url, _method)->route(req, _url);
+    return route(req, _url);
 }
 
 void Router::setRoot(QString newRoot) { root = newRoot; }
@@ -122,41 +75,10 @@ void Router::updateService(Service *newService) {
 
 Page *Router::route(FCGIRequest &req, QString url)
 {
-#ifdef DEBUG
-    qInfo() << "_routes:" << _routes;
-    for(Router* router: _routes)
-        qInfo() << router << router->getUrl();
-#endif
-
-    Page *page;
-    page = getPage(url.toUtf8());
+    static Page *page = new Page(Page::HTML, "NOT ROUTE");
+//    page = getPage(url.toUtf8());
 
     return page;
-}
-
-
-void Router::pageChanged(const QString &path) {
-    if (!path.startsWith(root))
-        return;
-
-    QString key = path;
-    key = key.remove(0, root.size());
-
-#ifdef DEBUG
-    qInfo() << "\n    void Router::pageChanged(const QString &path)";
-    qInfo() << "request: ";
-    qInfo() << "path: [" + path + "]";
-    qInfo() << "key: [" + key + "]";
-#endif
-
-
-    if (m_pages.contains(key)) {
-        m_pages.remove(key);
-        m_pageWatcher->removePath(path);
-#ifdef DEBUG
-    qInfo() << path + " removed";
-#endif
-    }
 }
 
 
